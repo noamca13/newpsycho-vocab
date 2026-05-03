@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Psychometric Vocabulary">
+<meta name="theme-color" content="#0f0f13">
+<title>Psychometric Vocabulary</title>
+<script>
+(function(){
+  try{
+    var c=document.createElement('canvas');
+    c.width=180;c.height=180;
+    var ctx=c.getContext('2d');
+    ctx.fillStyle='#0f0f13';
+    ctx.beginPath();ctx.rect(0,0,180,180);ctx.fill();
+    ctx.font='110px serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('\uD83E\uDDE0',90,95);
+    var link=document.createElement('link');
+    link.rel='apple-touch-icon';
+    link.href=c.toDataURL('image/png');
+    document.head.appendChild(link);
+  }catch(e){}
+})();
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Heebo:wght@400;600;700&display=swap');
+:root{
+  --bg:#0f0f13;--surface:#1a1a24;--surface2:#22222f;--border:#2e2e42;
+  --accent:#7c6dfa;--accent2:#a78bfa;--green:#22c55e;--red:#ef4444;
+  --yellow:#eab308;--text:#e8e8f0;--muted:#6b6b8a;--orange:#f97316;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;font-family:'Space Grotesk',sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px;font-weight:400}
+button{font-family:'Space Grotesk',sans-serif;font-size:14px}
+.he-text{font-family:'Heebo',sans-serif}
+#home{padding:16px 16px 80px}
+.home-header{text-align:center;margin-bottom:16px;padding-top:8px}
+.home-title{font-size:22px;font-weight:700;color:var(--accent2);margin-bottom:3px}
+.home-sub{font-size:12px;font-weight:400;color:var(--muted)}
+.wotd-card{background:linear-gradient(135deg,#1e1b40,#16132e);border:1px solid var(--accent);border-radius:18px;padding:14px 16px;margin-bottom:14px;cursor:pointer}
+.wotd-label{font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;text-align:center}
+.wotd-main{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px}
+.wotd-word{font-size:24px;font-weight:700;color:#fff}
+.wotd-speak{background:transparent;border:none;font-size:18px;cursor:pointer;opacity:.7;padding:2px}
+.wotd-hint{font-size:12px;font-weight:400;color:var(--muted);text-align:center}
+.wotd-revealed{display:none;text-align:center;margin-top:8px}
+.wotd-he{font-size:16px;font-weight:700;color:var(--accent2);direction:rtl;font-family:'Heebo',sans-serif;margin-bottom:8px}
+.wotd-actions{display:flex;gap:8px;justify-content:center}
+.wotd-btn{padding:6px 16px;border-radius:20px;border:none;font-size:12px;font-weight:600;cursor:pointer}
+.wotd-btn-yes{background:rgba(34,197,94,.2);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.wotd-btn-no{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.wotd-collapsed{display:flex;flex-direction:column;gap:5px;text-align:center}
+.wotd-collapsed-label{font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:1px;text-transform:uppercase}
+.wotd-collapsed-row2{display:flex;align-items:center;justify-content:center;gap:12px}
+.wotd-collapsed-word{font-size:15px;font-weight:700;color:#fff}
+.wotd-collapsed-he{font-size:13px;font-weight:600;color:#fff;direction:rtl;font-family:'Heebo',sans-serif}
+.wotd-collapsed-result{font-size:12px;font-weight:500;color:var(--muted);direction:ltr}
+.home-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.hstat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 6px;text-align:center}
+.hstat-val{font-size:20px;font-weight:700;color:var(--accent2)}
+.hstat-lbl{font-size:10px;font-weight:500;color:var(--muted);margin-top:2px}
+.hstat.streak .hstat-val{color:var(--orange)}
+.daily-goal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:14px}
+.goal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.goal-label{font-size:11px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.5px}
+.goal-count{font-size:13px;font-weight:600;color:var(--accent2)}
+.goal-bar-wrap{background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;margin-bottom:6px}
+.goal-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s}
+.goal-sub{font-size:11px;font-weight:400;color:var(--muted)}
+.goal-complete{color:var(--green);font-weight:600}
+.list-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.list-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px;cursor:pointer;transition:all .2s}
+.list-card:active{transform:scale(.97)}
+.list-card.has-prog{border-color:var(--accent)}
+.list-unit{font-size:17px;font-weight:700;color:var(--text);margin-bottom:2px}
+.list-title{font-size:11px;font-weight:500;color:var(--muted);margin-bottom:10px}
+.lbar-wrap{background:var(--surface2);border-radius:3px;height:3px;overflow:hidden;margin-bottom:6px}
+.lbar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s}
+.lbar-stats{display:flex;justify-content:space-between;font-size:10px;font-weight:500;color:var(--muted)}
+.lbar-stats .pct{color:var(--accent2);font-weight:600}
+#study{display:none}
+.study-hdr{padding:12px 16px 0;display:flex;align-items:center;gap:8px}
+.back-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--text);cursor:pointer}
+.study-title{font-size:14px;font-weight:700;color:var(--accent2);flex:1;text-align:center}
+.mute-btn{background:transparent;border:none;font-size:18px;cursor:pointer;padding:4px;opacity:.7}
+.mute-btn.muted{opacity:.3}
+.hdr-mastered{font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap}
+.hdr-mastered span{color:var(--green);font-weight:700}
+.tabs{display:flex;gap:4px;padding:10px 16px 0}
+.tab{flex:1;padding:8px 0;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;background:var(--surface2);color:var(--muted)}
+.tab.active{background:var(--accent);color:#fff}
+.view{display:none;padding:12px 16px 80px}
+.view.active{display:block}
+.mode-bar{display:flex;gap:5px;margin-bottom:10px}
+.mode-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
+.mode-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.pbar-wrap{background:var(--surface2);border-radius:3px;height:3px;margin-bottom:10px;overflow:hidden}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .4s}
+.card-wrap{perspective:1200px;height:280px;cursor:pointer;user-select:none}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.4,0,.2,1)}
+.card-inner.flipped{transform:rotateY(180deg)}
+.card-inner.sr{box-shadow:0 0 28px rgba(34,197,94,.4)}
+.card-inner.sl{box-shadow:0 0 28px rgba(239,68,68,.4)}
+.card-face{position:absolute;inset:0;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center}
+.card-front{background:linear-gradient(145deg,var(--surface),var(--surface2));border:1px solid var(--border)}
+.card-back{background:linear-gradient(145deg,#1e1b40,#16132e);border:1px solid var(--accent);transform:rotateY(180deg)}
+.ctype{font-size:10px;font-weight:500;color:var(--muted);background:var(--surface2);padding:2px 8px;border-radius:10px;margin-bottom:8px}
+.cen-row{display:flex;align-items:center;justify-content:center;gap:10px}
+.cen{font-size:28px;font-weight:700;color:#fff;line-height:1.2}
+.speak-btn{background:transparent;border:none;font-size:20px;cursor:pointer;opacity:.6;padding:3px}
+.speak-btn:active{opacity:1}
+.ctap{font-size:11px;font-weight:400;color:var(--muted);margin-top:14px}
+.che{font-size:24px;font-weight:700;color:var(--accent2);margin-bottom:6px;direction:rtl;line-height:1.3;font-family:'Heebo',sans-serif}
+.censm{font-size:12px;font-weight:500;color:var(--muted);margin-top:6px}
+.ctip{font-size:10px;font-weight:400;color:var(--yellow);background:rgba(234,179,8,.1);padding:3px 8px;border-radius:7px;margin-top:6px}
+.card-btns{display:none;gap:10px;margin-top:12px}
+.card-btns.visible{display:flex}
+.btn-knew{flex:1;padding:13px;border:1px solid rgba(34,197,94,.3);border-radius:14px;background:rgba(34,197,94,.12);color:var(--green);font-size:14px;font-weight:700;cursor:pointer}
+.btn-knew:active{background:rgba(34,197,94,.3)}
+.btn-didnt{flex:1;padding:13px;border:1px solid rgba(239,68,68,.3);border-radius:14px;background:rgba(239,68,68,.12);color:var(--red);font-size:14px;font-weight:700;cursor:pointer}
+.btn-didnt:active{background:rgba(239,68,68,.3)}
+.card-counter{text-align:center;font-size:11px;font-weight:400;color:var(--muted);margin-top:8px}
+.swipe-hint{text-align:center;font-size:11px;font-weight:400;color:var(--muted);margin-top:6px}
+.ses-done{display:none;text-align:center;padding:28px 16px}
+.ses-done.visible{display:block}
+.done-icon{font-size:52px;margin-bottom:12px}
+.done-title{font-size:20px;font-weight:700;margin-bottom:5px}
+.done-sub{font-size:12px;font-weight:400;color:var(--muted);margin-bottom:20px}
+.done-score{display:flex;justify-content:center;gap:24px;margin-bottom:20px}
+.done-num{text-align:center}
+.done-num .big{font-size:32px;font-weight:700}
+.done-num .lbl{font-size:10px;font-weight:500;color:var(--muted);margin-top:2px}
+.btn-restart{background:var(--accent);color:#fff;border:none;border-radius:14px;padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;width:100%;max-width:280px}
+.dqp{background:linear-gradient(135deg,#1e1b40,#16132e);border:1px solid var(--accent);border-radius:16px;padding:16px;margin-top:16px;text-align:center;display:none}
+.dqp-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.dqp-sub{font-size:12px;font-weight:400;color:var(--muted);margin-bottom:14px}
+.dqp-btns{display:flex;gap:10px}
+.btn-tq{flex:1;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:11px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-sq{flex:1;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:12px;padding:11px;font-size:13px;font-weight:500;cursor:pointer}
+.quiz-q{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center;margin-bottom:12px}
+.quiz-word{font-size:26px;font-weight:700;margin-bottom:3px}
+.quiz-type{font-size:10px;font-weight:500;color:var(--muted)}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:13px 8px;font-size:14px;font-weight:600;color:var(--text);cursor:pointer;direction:rtl;text-align:center;min-height:54px;display:flex;align-items:center;justify-content:center;line-height:1.3;font-family:'Heebo',sans-serif}
+.opt-btn.correct{background:rgba(34,197,94,.2);border-color:var(--green);color:var(--green)}
+.opt-btn.wrong{background:rgba(239,68,68,.2);border-color:var(--red);color:var(--red)}
+.opt-btn.disabled{pointer-events:none}
+.quiz-fb{display:none;text-align:center;padding:9px;border-radius:12px;font-size:13px;font-weight:600;margin-top:8px;direction:ltr}
+.quiz-fb.show{display:block}
+.quiz-fb.ok{background:rgba(34,197,94,.1);color:var(--green)}
+.quiz-fb.bad{background:rgba(239,68,68,.1);color:var(--red)}
+.quiz-next{width:100%;margin-top:8px;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;display:none}
+.quiz-next.show{display:block}
+.quiz-len-bar{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 10px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.quiz-len-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.quiz-len-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.quiz-len-count{font-size:11px;font-weight:700;color:var(--accent2);white-space:nowrap}
+.quiz-len-btns{display:flex;gap:5px;flex:1}
+.quiz-len-btn{flex:1;padding:5px 0;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;text-align:center}
+.quiz-len-btn:active{transform:scale(.95)}
+.quiz-len-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,109,250,.3)}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center}
+.kpi-val{font-size:26px;font-weight:700;color:var(--accent2)}
+.kpi-lbl{font-size:10px;font-weight:600;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.weekly-graph{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:16px}
+.weekly-title{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.weekly-bars{display:flex;align-items:flex-end;gap:6px;height:60px}
+.wbar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.wbar{width:100%;border-radius:4px 4px 0 0;background:var(--accent);opacity:.4;min-height:2px}
+.wbar.today{opacity:1}
+.wbar-label{font-size:9px;font-weight:500;color:var(--muted)}
+.prog-sec{margin-bottom:16px}
+.prog-sec-title{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.word-chip{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;margin:2px}
+.chip-hard{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.chip-good{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.reset-btn{width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer}
+.color-picker{display:flex;align-items:center;gap:12px;margin-top:20px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.color-picker-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.color-dots{display:flex;gap:10px;flex:1;justify-content:center}
+.color-dot{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .2s;flex-shrink:0}
+.color-dot.active{border-color:#fff;transform:scale(1.15)}
+.color-dot:active{transform:scale(.9)}
+</style>
+</head>
+<body>
+
+<div id="home">
+  <div class="home-header">
+    <div class="home-title">Psychometric Vocabulary 🧠</div>
+    <div class="home-sub">Choose a unit</div>
+  </div>
+
+  <div class="wotd-card" id="wotd-card">
+    <div class="wotd-label">Word of the Day ⚡</div>
+    <div class="wotd-main">
+      <div class="wotd-word" id="wotd-word">...</div>
+      <button class="wotd-speak" id="wotd-speak-btn">🔊</button>
+    </div>
+    <div class="wotd-hint" id="wotd-hint">Tap to reveal</div>
+    <div class="wotd-revealed" id="wotd-revealed">
+      <div class="wotd-he" id="wotd-he"></div>
+      <div class="wotd-actions">
+        <button class="wotd-btn wotd-btn-yes" id="wotd-yes">I knew it ✓</button>
+        <button class="wotd-btn wotd-btn-no" id="wotd-no">Didn't know</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-stats">
+    <div class="hstat streak"><div class="hstat-val" id="stat-streak">0 🔥</div><div class="hstat-lbl">Day Streak</div></div>
+    <div class="hstat"><div class="hstat-val" id="stat-seen">0</div><div class="hstat-lbl">Words Seen</div></div>
+    <div class="hstat"><div class="hstat-val" id="stat-mastered">0</div><div class="hstat-lbl">Mastered</div></div>
+  </div>
+
+  <div class="daily-goal">
+    <div class="goal-header">
+      <div class="goal-label">Daily Goal 🎯</div>
+      <div class="goal-count"><span id="goal-done">0</span> / 5 sessions</div>
+    </div>
+    <div class="goal-bar-wrap"><div class="goal-bar-fill" id="goal-bar" style="width:0%"></div></div>
+    <div class="goal-sub" id="goal-sub">Complete 5 sessions today</div>
+  </div>
+
+  <div class="list-grid" id="list-grid"></div>
+
+  <div class="color-picker">
+    <div class="color-picker-label">Theme</div>
+    <div class="color-dots" id="color-dots"></div>
+  </div>
+</div>
+
+<div id="study">
+  <div class="study-hdr">
+    <button class="back-btn" onclick="goHome()">Back</button>
+    <div class="study-title" id="study-title"></div>
+    <button class="mute-btn" id="mute-btn">🔊</button>
+    <div class="hdr-mastered">Mastered: <span id="hdr-mastered">0</span></div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('cards')">Flashcards</button>
+    <button class="tab" onclick="switchTab('quiz')">Quiz</button>
+    <button class="tab" onclick="switchTab('progress')">Progress</button>
+  </div>
+  <div class="view active" id="view-cards">
+    <div class="mode-bar">
+      <button class="mode-btn active" id="mode-all" onclick="setMode('all')">All</button>
+      <button class="mode-btn" id="mode-hard" onclick="setMode('hard')">Hard</button>
+      <button class="mode-btn" id="mode-new" onclick="setMode('new')">New</button>
+    </div>
+    <div class="pbar-wrap"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+    <div id="card-area">
+      <div class="card-wrap" id="card-wrap" onclick="flipCard()">
+        <div class="card-inner" id="card-inner">
+          <div class="card-face card-front">
+            <div class="ctype" id="cf-type"></div>
+            <div class="cen-row">
+              <div class="cen" id="cf-en"></div>
+              <button class="speak-btn" onclick="speakWord(event)">🔊</button>
+            </div>
+            <div class="ctap">Tap to reveal</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="che" id="cb-he"></div>
+            <div class="ctype" id="cb-type"></div>
+            <div class="censm" id="cb-en"></div>
+            <div class="ctip" id="cb-tip" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-hint">Swipe right ✓ / left ✗ · Tap to reveal</div>
+      <div class="card-btns" id="card-btns">
+        <button class="btn-knew" onclick="rateCard(true)">✓ Got it</button>
+        <button class="btn-didnt" onclick="rateCard(false)">✗ Not yet</button>
+      </div>
+      <div class="card-counter" id="card-counter"></div>
+    </div>
+    <div class="ses-done" id="ses-done">
+      <div class="done-icon">🎉</div>
+      <div class="done-title">Session Complete!</div>
+      <div class="done-sub" id="done-sub"></div>
+      <div class="done-score">
+        <div class="done-num"><div class="big" style="color:var(--green)" id="d-knew">0</div><div class="lbl">Got it</div></div>
+        <div class="done-num"><div class="big" style="color:var(--red)" id="d-didnt">0</div><div class="lbl">Not yet</div></div>
+        <div class="done-num"><div class="big" style="color:var(--accent2)" id="d-pct">0%</div><div class="lbl">Accuracy</div></div>
+      </div>
+      <button class="btn-restart" onclick="restartSes()">New Session 🔄</button>
+      <div class="dqp" id="dqp">
+        <div class="dqp-title">Daily Goal Complete! 🏆</div>
+        <div class="dqp-sub">Test yourself on today's words?</div>
+        <div class="dqp-btns">
+          <button class="btn-tq" onclick="startDailyQuiz()">Take the Quiz</button>
+          <button class="btn-sq" onclick="document.getElementById('dqp').style.display='none'">Skip</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="view" id="view-quiz">
+    <div id="quiz-area">
+      <div class="quiz-len-bar">
+        <div class="quiz-len-label">Words</div>
+        <div class="quiz-len-btns">
+          <button class="quiz-len-btn" onclick="setQuizLen(10)">10</button>
+          <button class="quiz-len-btn" onclick="setQuizLen(15)">15</button>
+          <button class="quiz-len-btn active" onclick="setQuizLen(20)">20</button>
+        </div>
+        <div class="quiz-len-count" id="quiz-len-display">20 words</div>
+      </div>
+      <div class="pbar-wrap"><div class="pbar-fill" id="qbar" style="width:0%"></div></div>
+      <div class="quiz-q">
+        <div class="quiz-word" id="q-word"></div>
+        <div class="quiz-type" id="q-type"></div>
+      </div>
+      <div class="quiz-opts" id="quiz-opts"></div>
+      <div class="quiz-fb" id="quiz-fb"></div>
+      <button class="quiz-next" id="quiz-next" onclick="nextQuiz()">Next ›</button>
+    </div>
+    <div class="ses-done" id="quiz-done">
+      <div class="done-icon" id="quiz-done-icon">🏆</div>
+      <div class="done-title">Quiz Complete</div>
+      <div class="done-sub" id="qd-sub" style="font-size:15px"></div>
+      <div class="done-score">
+        <div class="done-num"><div class="big" style="color:var(--green)" id="qd-ok">0</div><div class="lbl">Correct</div></div>
+        <div class="done-num"><div class="big" style="color:var(--red)" id="qd-bad">0</div><div class="lbl">Wrong</div></div>
+        <div class="done-num"><div class="big" style="color:var(--accent2)" id="qd-pct">0%</div><div class="lbl">Accuracy</div></div>
+      </div>
+      <button class="btn-restart" onclick="startQuiz()">New Quiz 🔄</button>
+    </div>
+  </div>
+  <div class="view" id="view-progress">
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-val" id="p-seen">0</div><div class="kpi-lbl">Words Seen</div></div>
+      <div class="kpi-card"><div class="kpi-val" id="p-mastered">0</div><div class="kpi-lbl">Mastered</div></div>
+      <div class="kpi-card"><div class="kpi-val" id="p-acc">--</div><div class="kpi-lbl">Accuracy</div></div>
+      <div class="kpi-card"><div class="kpi-val" id="p-ses">0</div><div class="kpi-lbl">Sessions</div></div>
+    </div>
+    <div class="weekly-graph">
+      <div class="weekly-title">Weekly Activity</div>
+      <div class="weekly-bars" id="weekly-bars"></div>
+    </div>
+    <div class="prog-sec"><div class="prog-sec-title">Words to Review</div><div id="hard-list">--</div></div>
+    <div class="prog-sec"><div class="prog-sec-title">Mastered Words</div><div id="good-list">--</div></div>
+    <button class="reset-btn" onclick="confirmReset()">Reset progress for this unit</button>
+  </div>
+</div>
+
+<script>
+var ALL_LISTS = {"1":{"about":["ליד, בערך","",""],"as":["כאשר, כש","",""],"both":["שניהם","",""],"comparatively":["באופן יחסי","",""],"correspondingly":["בהתאמה","",""],"equally":["במידה שווה","",""],"for example":["לדוגמה","",""],"for instance":["לדוגמה","",""],"identically":["באופן זהה","",""],"in other words":["במילים אחרות","",""],"in the same way":["באותו אופן","",""],"just as":["בדיוק כמו","",""],"like":["כמו","",""],"likewise":["כמו -כן, באותו אופן","",""],"similarly":["באופן דומה","",""],"such as":["כמו למשל","",""],"that":["ש","",""],"above all":["מעל לכל","",""],"absolutely":["לחלוטין","",""],"certainly":["בהחלט, בוודאי","",""],"chiefly":["בעיקר","",""],"especially":["במיוחד","",""],"essentially":["בעיקרו, במהותו","",""],"however":["למרות זאת","",""],"in fact":["למעשה","",""],"in general":["באופן כללי","",""],"in particular":["במיוחד","",""],"incidentally":["דרך אגב","",""],"indeed":["בהחלט","",""],"mainly":["בעיקר","",""],"markedly":["בצורה ניכרת","",""],"namely":["במיוחד, כלומר","",""],"notably":["ראוי לציון","",""],"of course":["כמובן, בוודאי","",""],"particularly":["במיוחד, בפרט","",""],"primarily":["בעיקר","",""],"significantly":["באופן משמעותי","",""],"specifically":["במיוחד","",""],"surely":["ללא ספק","",""],"surprisingly":["במפתיע","",""],"too":["גם","",""],"truly":["באמת","",""],"undoubtedly":["ללא ספק","",""],"additionally":["בנוסף","",""],"along with":["יחד עם","",""],"also":["גם","",""],"and":["ו","",""],"as well as":["כמו גם","",""],"aside from":["חוץ מ","",""],"besides":["בכל מקרה","",""],"but":["אך, אבל","",""],"coupled with":["יחד עם","",""],"except":["מלבד, חוץ מ","",""],"furthermore":["זאת ועוד","",""],"in addition":["בנוסף","",""],"including":["כולל","",""],"moreover":["זאת ועוד","",""],"not only":["לא רק","",""],"not to mention":["שלא לדבר על","",""],"together with":["יחד עם","",""],"with":["באמצעות, עם","",""],"without":["מבלי, ללא","",""],"despite":["למרות","",""],"even so":["אף על פי כן","",""],"even though":["למרות ש","",""],"in spite of":["למרות","",""],"nevertheless":["למרות זאת","",""],"nonetheless":["למרות זאת","",""],"after":["אחרי","",""],"afterwards":["לאחר מכן","",""],"again":["שוב","",""],"as long as":["כל עוד","",""],"as soon as":["כאשר, ברגע ש","",""],"at first":["בהתחלה","",""],"at last":["סוף סוף","",""],"before":["לפני, מול","",""],"by":["ליד, בסמוך ל","",""],"currently":["כרגע, נכון לעכשיו","",""],"during":["תוך כדי, במשך","",""],"earlier":["קודם לכן","",""],"eventually":["לבסוף","",""],"finally":["לבסוף, סוף סוף","",""],"first of all":["ראשית","",""],"former":["קודם, לשעבר","",""],"from":["מ","",""],"further":["לקדם","",""],"immediately":["מיד","",""],"in a moment":["בעוד רגע","",""],"in due time":["בבוא העת","",""],"initially":["בתחילה","",""],"instantly":["מיד","",""],"last":["אחרון","",""],"later":["מאוחר יותר","",""],"meanwhile":["בינתיים","",""],"next":["הבא","",""],"now":["עכשיו","",""],"once":["ברגע ש","",""],"past":["עבר, שעבר","",""],"presently":["כעת","",""],"previously":["הקודם, לפני -כן","",""],"prior to":["קודם ל -, לפני","",""],"shortly":["בקיצור, בקרוב","",""],"simultaneously":["בו זמנית","",""],"since":["מכיוון ש","",""],"soon":["בהקדם, מוקדם","",""],"still":["עדיין, למרות זאת","",""],"suddenly":["לפתע","",""],"then":["אז","",""],"to begin with":["בתור התחלה","",""],"until":["עד ש","",""],"until now":["עד עתה","",""],"when":["כאשר, כש","",""],"whenever":["כש -, מתישהו","",""],"while":["כל עוד","",""],"yet":["אך, אולם","",""],"backward":["לאחור","",""],"down":["למטה","",""],"forward":["קדימה, לפנים","",""],"left":["שמאלה","",""],"right":["ימינה","",""],"sideways":["הצידה","",""],"toward":["אל, אל עבר","",""],"upon":["על","",""],"upside down":["הפוך","",""],"above":["מעל","",""],"across":["בצד השני, לרוחב","",""],"adjacent to":["ליד","",""],"against":["כנגד, ממול","",""],"ahead of":["לפני, לפנים","",""],"along":["לאורך","",""],"alongside":["לצד, במקביל","",""],"amid":["בקרב, בין","",""],"among":["בקרב, בין","",""],"around":["מסביב","",""],"at":["אצל, ב","",""],"behind":["מאחורי","",""],"below":["מתחת","",""],"beneath":["מתחת","",""],"beside":["ליד","",""],"between":["בין","",""],"beyond":["מעבר","",""],"close":["קרוב","",""],"distant":["מרוחק","",""],"elsewhere":["במקום אחר","",""],"farther":["הלאה, יותר","",""],"here":["כאן","",""],"in":["ב -, בתוך","",""],"in front of":["בחזית של, מול","",""],"inside":["בתוך, פנים","",""],"into":["אל תוך","",""],"latter":["שני, אחרון","",""],"near":["קרוב","",""],"nearby":["ליד, קרוב","",""],"next to":["ליד","",""],"of":["של, מ","",""],"on":["על","",""],"on top of":["על, מעל","",""],"opposite":["מנוגד, ממול","",""],"outside":["בחוץ","",""],"over":["על, מעל","",""],"there":["שם","",""],"under":["מתחת","",""],"underneath":["מתחת","",""],"up":["למעלה","",""],"where":["בעוד ש","",""],"wherever":["בכל מקום, לא משנה היכן","",""],"within":["בתוך","",""],"albeit":["אף על פי","",""],"although":["למרות ש","",""],"contradictory":["סותר","",""],"contrary":["להפך, בניגוד ל","",""],"conversely":["לעומת זאת","",""],"different from":["שונה מ","",""],"in comparison":["בהשוואה","",""],"in contrast to":["בניגוד ל","",""],"instead":["במקום","",""],"instead of":["במקום","",""],"on the contrary":["בניגוד לכך","",""],"or":["או","",""],"otherwise":["אחרת","",""],"rather":["עדיף","",""],"rather than":["במקום, יותר מ","",""],"regardless":["למרות, ללא קשר","",""],"than":["מ","",""],"though":["למרות ש","",""],"unlike":["שלא כמו","",""],"vice versa":["להיפך","",""],"whereas":["בעוד ש","",""],"after all":["אחרי הכל","",""],"because":["בגלל","",""],"because of":["בגלל","",""],"being that":["מכיוון ש","",""],"due to":["בגלל, לאור","",""],"given that":["בהתחשב בכך","",""],"in light of":["לאור","",""],"owing to":["הודות ל","",""],"thanks to":["תודות ל","",""],"therefore":["לכן","",""],"why":["מדוע","",""],"all in all":["בסך הכל","",""],"altogether":["בסך הכל","",""],"in a word":["במילה אחת","",""],"in conclusion":["לסיכום","",""],"overall":["כולל, באופן כללי","",""],"to sum up":["כדי לסכם","",""],"according":["לפי","",""],"accordingly":["בהתאם","",""],"as a result":["כתוצאה","",""],"consequently":["כתוצאה מכך","",""],"for":["עבור","",""],"hence":["לפיכך, לכן","",""],"in that case":["במקרה הזה","",""],"led to":["הוביל ל","",""],"so":["אז, כך ש -, ולכן","",""],"so that":["כך ש","",""],"subsequently":["כתוצאה מכך","",""],"thus":["לכן, כך ש","",""],"always":["תמיד","",""],"consistently":["בעקביות","",""],"constantly":["באופן קבוע","",""],"daily":["יומיומי","",""],"every day":["כל יום","",""],"every now and then":["לפעמים","",""],"for the most part":["בדרך -כלל","",""],"forever":["לנצח, לתמיד","",""],"frequently":["לעיתים קרובות","",""],"from time to time":["מפעם לפעם","",""],"hardly ever":["כמעט אף פעם","",""],"mostly":["לרוב","",""],"never":["אף פעם","",""],"occasionally":["מידי פעם","",""],"often":["לעיתים קרובות","",""],"once in a while":["מידי פעם","",""],"ordinarily":["בדרך -כלל","",""],"permanently":["קבוע","",""],"perpetually":["נצחי, לנצח","",""],"rarely":["לעיתים נדירות","",""],"regularly":["באופן קבוע","",""],"seldom":["לעיתים רחוקות","",""],"sometimes":["לעיתים, לפעמים","",""],"usually":["בדרך -כלל","",""],"as if":["כאילו","",""],"based on":["מבוסס על","",""],"even if":["גם אם","",""],"granted (that)":["בהנחה ש -, נתון ש","",""],"If":["אם","",""],"in case":["במקרה","",""],"in order to":["על -מנת, בכדי","",""],"only":["רק","",""],"provided that":["בתנאי ש","",""],"so long as":["כל עוד","",""],"unless":["אלא אם כן","",""],"which":["איזה","",""],"how":["איך, כיצד","",""],"what":["מה, איזה","",""],"who":["מי, ש","",""],"whom":["מי","",""],"whose":["אשר לו, אשר הוא","",""],"1st - first":["ראשון","",""],"2nd - second":["שני","",""],"3rd - third":["שלישי","",""],"4th - fourth":["רביעי","",""],"5th - fifth":["חמישי","",""],"6th - sixth":["שישי","",""],"7th - seventh":["שביעי","",""],"8th - eighth":["שמיני","",""],"9th - ninth":["תשיעי","",""],"tenth - 10th":["עשירי","",""]},"2":{"ability":["יכולת","",""],"able":["יכול, מסוגל","",""],"accept":["לקבל","",""],"acceptable":["מקובל","",""],"acceptance":["הסכמה","",""],"accident":["תאונה","",""],"achieve":["להשיג","",""],"activate":["להפעיל","",""],"active":["פעיל","",""],"actor":["שחקן","",""],"actual":["ממשי","",""],"actually":["למעשה","",""],"addition":["תוספת, הוספה","",""],"address":["כתובת","",""],"adjust":["לכוונן","",""],"afford":["יכל לעמוד בהוצאות","",""],"afraid":["מפחד","",""],"agree":["להסכים","",""],"agreement":["הסכם","",""],"aim":["לכוון, מטרה","",""],"alarm":["אזעקה","",""],"alive":["חי","",""],"almost":["כמעט","",""],"alone":["לבד","",""],"alternate":["חלופי","",""],"altogether":["לגמרי","",""],"ambassador":["שגריר","",""],"ambiguous":["דו משמעי, לא לגמרי ברור","",""],"amount":["כמות","",""],"anger":["כעס, להכעיס","",""],"angry":["כועס","",""],"animal":["חיה","",""],"another":["אחר","",""],"answer":["תשובה","",""],"apart":["בנפרד","",""],"apology":["התנצלות","",""],"appear":["נראה ש","",""],"appearance":["מראה, הופעה","",""],"appropriate":["מתאים","",""],"approve":["לאשר","",""],"architect":["ארכיטקט","",""],"architecture":["אדריכלות, ארכיטקטורה","",""],"area":["אזור, תחום","",""],"argue":["להתווכח","",""],"argument":["ויכוח","",""],"aristocrat":["אציל, אריסטוקרט","",""],"arm":["זרוע","",""],"army":["צבא","",""],"around":["בערך","",""],"arrange":["לסדר","",""],"arrest":["מעצר, לעצור","",""],"arrive":["להגיע","",""],"art":["אמנות","",""],"article":["מאמר","",""],"articulate":["להביע","",""],"artist":["אמן","",""],"artistic":["אמנותי","",""],"as far as":["לגבי, בכל הנוגע ל","",""],"as proof of":["כהוכחה ל","",""],"ask":["לשאול","",""],"asked for":["ביקש","",""],"associate":["לקשר","",""],"association":["איגוד","",""],"assume":["להניח","",""],"assumption":["הנחה","",""],"at least":["לפחות","",""],"athlete":["ספורטאי, אתלט","",""],"attach":["לחבר, ליחס","",""],"attack":["לתקוף, מתקפה","",""],"attempt":["ניסיון","",""],"attitude":["גישה","",""],"attract":["למשוך","",""],"attraction":["משיכה","",""],"attractive":["נאה, מושך","",""],"audience":["קהל","",""],"authentic":["מקורי, אותנטי","",""],"availability":["זמינות","",""],"available":["זמין","",""],"average":["ממוצע, רגיל","",""],"avoid":["להתחמק, להימנע","",""],"awake":["ער, להתעורר","",""],"bacteria":["חיידקים","",""],"badly":["נואשות, קשות","",""],"baker":["אופה","",""],"band":["לחבוש, תחבושת, רצועה","",""],"barely":["בקושי","",""],"base":["בסיס","",""],"bat":["מחבט","",""],"bath":["אמבטיה, להתרחץ","",""],"battle":["מאבק, להיאבק","",""],"beach":["חוף ים","",""],"bear":["לסבול, לשאת","",""],"beauty":["יופי","",""],"bedroom":["חדר שינה","",""],"begin/an/un":["להתחיל / התחיל / התחיל","",""],"beginning":["התחלה","",""],"belong":["שייך","",""],"best":["הכי טוב","",""],"best-seller":["רב -מכר","",""],"better":["טוב יותר","",""],"bicycle":["אופניים","",""],"birth":["לידה","",""],"bite":["לנשוך, נשיכה","",""],"bizarre":["מוזר","",""],"blind":["עיוור","",""],"block":["חסימה","",""],"blood":["דם","",""],"blood vessel":["כלי דם","",""],"blow, blew":["לפוצץ, פוצץ","",""],"boat":["סירה","",""],"body":["גוויה, גוף","",""],"bone":["עצם","",""],"border":["גבול","",""],"boring":["משעמם","",""],"bottle":["בקבוק","",""],"bottom":["ישבן","",""],"bought":["קנה","",""],"brain":["מוח, שכל","",""],"brainwash":["לשטוף את המח","",""],"brave":["אמיץ","",""],"bread":["לחם","",""],"break":["לשבור","",""],"breathe":["לנשום","",""],"bridge":["גשר, לגשר","",""],"broad":["נרחב","",""],"budget":["תקציב, לתקצב","",""],"build":["מבנה","",""],"building":["בניין","",""],"built":["לבנות","",""],"bullet":["קליע","",""],"by":["באמצעות, על -ידי","",""],"call":["לקרוא, להתקשר","",""],"camera":["מצלמה","",""],"care":["לדאוג, לטפל","",""],"carefully":["בזהירות","",""],"careless":["לא זהיר, רשלני","",""],"carry":["לסחוב","",""],"catalogue":["קטלוג, רשימת פריטים","",""],"catch, caught":["לתפוס, תפס","",""],"cause":["גורם, סיבה","",""],"cell":["תא","",""],"center":["מרכז","",""],"central":["מרכזי","",""],"challenge":["אתגר","",""],"chance":["סיכוי","",""],"change":["שינוי, לשנות","",""],"characterize":["לאפיין","",""],"cheap":["זול","",""],"check":["לבדוק","",""],"child":["ילד","",""],"childhood":["ילדות","",""],"children":["ילדים","",""],"circle":["מעגל","",""],"clean":["נקי, לנקות","",""],"clever":["פיקח","",""],"climb":["לטפס","",""],"clock":["שעון","",""],"close":["סגור, לסגור","",""],"cloth":["בגד, בד","",""],"coach":["( קרון נוסעים, כרכרה, מחלקת תיירים (במטוס","",""],"code":["קוד","",""],"coexist":["להתקיים בשותפות","",""],"coin":["מטבע","",""],"cold":["קר, התקררות","",""],"colonial":["קולוניאלי","",""],"color":["צבע","",""],"complain":["להתלונן","",""],"complete":["להשלים","",""],"consist":["מורכב מ","",""],"contact":["ליצור קשר, מגע","",""],"continue":["להמשיך","",""],"continuity":["המשכיות, רצף הגיוני","",""],"continuous":["מתמשך","",""],"control":["שליטה, לשלוט","",""],"cool":["לצנן, צונן","",""],"copies":["עותקים","",""],"copy":["להעתיק","",""],"corner":["פינה, לדחוק לפינה","",""],"correct":["נכון","",""],"cost":["מחיר, עלות","",""],"costly":["יקר","",""],"count":["רוזן","",""],"country":["כפר, אזור","",""],"cover":["כיסוי, מכסה","",""],"cow":["פרה","",""],"culture":["תרבות","",""],"dance":["לרקוד","",""],"danger":["סכנה, לסכן","",""],"dangerous":["מסוכן","",""],"daughter":["בת","",""],"death":["מוות","",""],"deep":["עמוק","",""],"deeply":["מאוד, במידה רבה","",""],"define":["להגדיר","",""],"definite":["מוחלט","",""],"delete":["למחוק","",""],"desert":["לנטוש","",""],"devastate":["להחריב","",""],"die":["מת, למות","",""],"die (dice)":["( קובייה (קוביות","",""],"difficult":["קשה","",""],"dirty":["מלוכלך","",""],"diverse":["מגוון","",""],"done":["גמור, עשוי","",""],"dream":["חלום, לחלום","",""],"drink":["לשתות, משקה","",""],"drug":["סם, תרופה, לסמם","",""],"due":["בשל","",""],"early":["מוקדם","",""],"earth":["אדמה","",""],"Earth":["כדור הארץ","",""],"earthquake":["רעידת אדמה","",""],"educate":["לחנך","",""],"education":["השכלה","",""],"empty":["ריק, לרוקן","",""],"enemy":["אויב","",""],"energy":["אנרגיה, כוח","",""],"enjoy":["ליהנות","",""],"enjoyable":["מהנה","",""],"enter":["נכנס","",""],"error":["שגיאה","",""],"escape":["לברוח, בריחה","",""],"evening":["ערב","",""],"event":["אירוע","",""],"exact":["מדויק","",""],"exactly":["בדיוק","",""],"example":["דוגמה","",""],"excessive":["יתר, מוגזם","",""],"expert":["מומחה","",""],"extinct":["נכחד","",""],"fact":["עובדה","",""],"false":["שקר","",""],"farm":["חווה","",""],"farmer":["חוואי","",""],"father":["אבא","",""],"fear":["פחד, לפחד","",""],"feel":["להרגיש","",""],"feeling":["הרגשה","",""],"few":["מעט","",""],"field":["תחום, שדה","",""],"find":["למצוא","",""],"findings":["ממצאים","",""],"finger":["אצבע","",""],"fire":["לירות","",""],"fix":["לתקן","",""],"flower":["פרח","",""],"forget":["לשכוח","",""],"friend":["חבר","",""],"friendly":["ידידותי","",""],"friendship":["חברות","",""],"front":["חזית, להתעמת","",""],"full":["מלא, למלא","",""],"gain":["להרוויח, להוסיף","",""],"glad":["שמח","",""],"gradual":["הדרגתי","",""],"great":["גדול, מעולה","",""],"half":["חצי","",""],"hand":["למסור","",""],"hear":["לשמוע","",""],"hearsay":["שמועה","",""],"heat":["חום, לחמם","",""],"hero":["גיבור","",""],"horse":["סוס","",""],"hot":["חריף","",""],"house":["בית","",""],"impartial":["אוביקטיבי, ללא צד","",""],"inconsistent":["לא עקבי","",""],"insert":["להכניס","",""],"jump":["לקפוץ","",""],"just":["רק, בלבד","",""],"kill":["להרוג, לחסל, הרג","",""],"king":["מלך","",""],"kingdom":["ממלכה","",""],"kitchen":["מטבח","",""],"last":["המשיך, החזיק מעמד","",""],"late":["מאוחר, לאחר","",""],"light":["אור","",""],"like":["לחבב, להעדיף","",""],"list":["רשימה, להכין רשימה","",""],"lock":["מנעול, לנעול","",""],"logic":["הגיון","",""],"main":["עיקרי","",""],"map":["מפה, למפות","",""],"mark":["לסמן","",""],"maybe":["אולי","",""],"meeting":["פגישה","",""],"member":["( חבר (בקבוצה מסוימת","",""],"milk":["חלב, לחלוב","",""],"mistake":["טעות","",""],"mistaken":["שגוי, לטעות","",""],"money":["כסף","",""],"move":["לזוז, לעבור","",""],"movement":["תנועה","",""],"must":["חייב, חובה, הכרח","",""],"number":["מספר","",""],"once":["פעם אחת","",""],"open":["לפתוח, פתוח","",""],"over":["מחדש, שוב","",""],"paragraph":["פִסקה","",""],"pay":["לשלם","",""],"peace":["שלום","",""],"peaceful":["שָׁלֵו, שקט","",""],"pilot":["טייס","",""],"place":["מקום, למקם","",""],"plan":["תכנית","",""],"plane":["מישור","",""],"president":["נשיא","",""],"price":["מחיר","",""],"primary":["יסודי, עיקרי","",""],"problem":["בעיה","",""],"program":["לתכנת","",""],"queen":["מלכה","",""],"question":["שאלה","",""],"quick":["זריז","",""],"rates":["שיעור , היקף, תעריף","",""],"rather":["למדי","",""],"react":["להגיב","",""],"region":["מחוז, אזור","",""],"register":["להירשם","",""],"registration":["הרשמה","",""],"reject":["לדחות","",""],"rest":["יתר, שאר","",""],"rich":["עשיר","",""],"right":["זכות","",""],"risk":["סיכון, לסכן","",""],"river":["נהר","",""],"road":["דרך","",""],"safe":["בטוח","",""],"safety":["בטיחות","",""],"save":["לשמור","",""],"scare":["פחד, להפחיד","",""],"school":["בית -ספר","",""],"search":["חיפוש, לחפש","",""],"select":["לבחור","",""],"sell":["למכור","",""],"send":["לשלוח","",""],"several":["אחדים, כמה","",""],"short":["קצר","",""],"shortage":["מחסור","",""],"side":["צד, לצודד, לתמוך","",""],"sleep":["לישון","",""],"slow":["איטי, לאט","",""],"slow down":["להאט","",""],"so":["כל -כך, מאוד","",""],"space":["רווח","",""],"speed":["מהירות","",""],"start":["להתחיל","",""],"still":["נייח, דומם, שקט","",""],"stone":["אבן","",""],"strong":["חזק","",""],"stronghold":["מאחז","",""],"system":["שיטה","",""],"target":["מטרה","",""],"teach, taught":["ללמד, לימד","",""],"think, thought":["לחשוב, חשב","",""],"time":["זמן","",""],"totally":["לחלוטין","",""],"town":["עיר, עיירה","",""],"understand":["להבין","",""],"unusual":["בלתי רגיל, יוצא דופן","",""],"use":["להשתמש","",""],"useful":["שימושי","",""],"useless":["חסר תועלת","",""],"usual":["רגיל","",""],"valuable":["יקר ערך","",""],"value":["ערך, להעריך","",""],"view":["נוף, שדה ראיה","",""],"viewer":["צופה","",""],"visit":["לבקר","",""],"visitor":["אורח, מבקר","",""],"voice":["קול, להשמיע קול","",""],"wait":["להמתין, המתנה","",""],"way":["דרך","",""],"weather":["מזג אוויר","",""]},"3":{"abrupt":["פתאומי","",""],"absolute":["מוחלט","",""],"accessible":["נגיש, זמין","",""],"accomplish":["להשלים, להשיג","",""],"accomplished":["מומחה, מעולה","",""],"accomplishment":["הישג","",""],"account":["חשבון","",""],"accuracy":["דיוק","",""],"accurate":["מדויק","",""],"activist":["פעיל, אקטיביסט","",""],"adapt":["להסתגל","",""],"administer":["לתת, לחלק","",""],"administration":["מנהל","",""],"admit":["להכניס, לקבל לתוך קבוצה","",""],"adult":["מבוגר","",""],"adulthood":["בגרות","",""],"advance":["מתקדם","",""],"advancement":["מקדמה","",""],"advantage":["יתרון","",""],"advice":["עצה","",""],"advise":["לייעץ","",""],"advisor":["יועץ","",""],"aesthetic":["אסתטיקה","",""],"allocate":["להקצות","",""],"announcement":["הכרזה","",""],"annually":["שנתי","",""],"appoint":["למנות","",""],"approach":["גישה","",""],"approximately":["בערך, בקירוב","",""],"astronomy":["אסטרונומיה","",""],"attention":["תשומת לב","",""],"attribute":["תכונה, מאפיין","",""],"aware":["מודע","",""],"balance":["איזון, לאזן","",""],"ban":["חרם, איסור","",""],"belief":["אמונה","",""],"bend":["לכופף","",""],"beware":["היזהר","",""],"borrow":["להשאיל","",""],"brief":["תדריך, תקציר","",""],"briefly":["בקצרה","",""],"bright":["בהיר, ברור","",""],"by no means":["ללא ספק, בשום אופן","",""],"by now":["עד עתה","",""],"capable":["מסוגל, יכול","",""],"capacity":["קיבולת","",""],"capital":["אות גדולה","",""],"capital punishment":["עונש מוות","",""],"capitalize":["לנצל","",""],"certain":["בטוח","",""],"certainty":["וודאות","",""],"character":["דמות","",""],"characteristic":["מאפיין","",""],"choice":["בחירה","",""],"choose":["לבחור","",""],"circumstance":["מצב, תנאי, נסיבות","",""],"civil":["אדיב","",""],"class":["סוג","",""],"classify":["לסווג, מסווג","",""],"colony":["מושבה","",""],"combine":["לצרף, לשלב","",""],"common":["נפוץ, משותף","",""],"communal":["משותף, ציבורי","",""],"communicate":["לתקשר","",""],"community":["קהילה","",""],"company":["חברה","",""],"comparable":["בר -השוואה","",""],"compare":["להשוות","",""],"comparison":["השוואה","",""],"comprehend":["להבין","",""],"comprehension":["הבנה","",""],"concentrate":["להתרכז","",""],"conclude":["להסיק","",""],"conclusion":["מסקנה","",""],"conclusively":["סופית, באופן החלטי","",""],"confirm":["לאשר, לאמת","",""],"continuation":["המשך","",""],"cooperation":["שיתוף פעולה","",""],"core":["ליבה","",""],"crisis":["משבר","",""],"cure":["מרפא","",""],"decide":["להחליט","",""],"decline":["ירידה","",""],"decrease":["להפחית, לצמצם","",""],"deduce":["להסיק","",""],"demand":["לדרוש, דרישה","",""],"deny":["להכחיש","",""],"depart":["לעזוב","",""],"derive":["לשאוב, להפיק, לגזור מ","",""],"descend":["ירד, הדרדר","",""],"descendent":["צאצא","",""],"deserve":["( מגיע (לו","",""],"destiny":["גורל","",""],"devote":["להקדיש","",""],"direct":["ישיר, כנה","",""],"direction":["כיוון","",""],"disadvantage":["חסרון","",""],"disclose":["לגלות, לחשוף","",""],"discover":["לגלות","",""],"discoveries":["תגליות","",""],"discuss":["לדון, להתווכח","",""],"disprove":["להפריך","",""],"distinct":["ברור, נפרד","",""],"distress":["מצוקה","",""],"diverge":["לסטות","",""],"diversity":["מגוון","",""],"divide":["לחלק","",""],"doubt":["ספק, להטיל ספק","",""],"edit":["לערוך","",""],"edition":["מהדורה","",""],"editor":["עורך","",""],"emperor":["שליט, קיסר","",""],"empire":["אימפריה","",""],"enable":["לאפשר","",""],"enormous":["עצום","",""],"enough":["מספיק","",""],"era":["עידן","",""],"essential":["חיוני","",""],"evaluate":["להעריך, לאמוד","",""],"evaluation":["הערכה","",""],"even":["ליישר, להשוות","",""],"evenly":["באופן שווה","",""],"except for":["למעט","",""],"exercise":["לממש, ליישם","",""],"expect":["לצפות","",""],"expectations":["ציפיות","",""],"explain":["להסביר","",""],"explanation":["הסבר","",""],"express":["מהיר","",""],"expression":["ביטוי","",""],"extreme":["קיצוני","",""],"face":["פנים","",""],"facial":["שקשור בפנים","",""],"financial":["כספי","",""],"forbid":["לאסור","",""],"form":["ליצור, להקים","",""],"formal":["רשמי","",""],"forth":["הלאה, קדימה","",""],"general":["כללי","",""],"General":["( גנרל (דרגה צבאית","",""],"generally":["באופן כללי","",""],"gross":["ברוטו, גלמי","",""],"growth":["צמיחה, גדילה","",""],"habit":["הרגל","",""],"habitat":["סביבת מגורים","",""],"health":["בריאות","",""],"heavily":["מאוד, במידה רבה","",""],"heavy":["כבד","",""],"hope":["תקווה, לקוות","",""],"human":["אנושי","",""],"human being":["בן -אדם, אנוש","",""],"identical":["זהה","",""],"implicate":["לסבך, לערב","",""],"implications":["השלכות, משמעות","",""],"importance":["חשיבות","",""],"important":["חשוב","",""],"inadequate":["לקוי, לא מספיק","",""],"income":["הכנסה","",""],"incomprehensible":["לא מובן","",""],"indicate":["להצביע על","",""],"indication":["אינדיקציה, סימן ל","",""],"inhabit":["ליישב, לאכלס","",""],"inhabitants":["תושבים","",""],"initial":["ראשי תיבות","",""],"initiated":["יזם, התחיל, אִתְחֵל","",""],"international":["בינלאומי","",""],"island":["אי","",""],"isle":["אי","",""],"issue":["נושא, עניין, סוגיה","",""],"jewel":["תכשיט","",""],"join":["להצטרף, לחבר","",""],"joint":["מפרק, חיבור","",""],"judge":["שופט","",""],"lack":["מחסור","",""],"language":["שפה","",""],"large":["גדול","",""],"largest":["הגדול ביותר","",""],"law":["חוק","",""],"lawyer":["עורך -דין","",""],"legal":["חוקי","",""],"legalize":["להפוך חוקי, לאשר","",""],"less":["פחות","",""],"lethal":["קטלני","",""],"level":["לאזן, להשוות","",""],"likely":["סביר","",""],"local":["מקומי","",""],"locate":["לאתר","",""],"malfunction":["כשל, ליקוי","",""],"massacre":["טֶבַח","",""],"medicine":["רפואה, תרופה","",""],"medieval":["מתקופת ימי הביניים","",""],"merchandise":["מוצרים, סחורה","",""],"mere":["רק, לא יותר מ","",""],"merely":["רק, לא יותר מ","",""],"middle":["אמצע","",""],"mortal":["קטלני","",""],"mortality":["תמותה","",""],"most":["רוב","",""],"mutually":["באופן שווה/הדדי","",""],"nation":["אומה","",""],"nationality":["לאום","",""],"nationalize":["להלאים","",""],"native":["יליד, מקומי, טבעי","",""],"natural":["טבעי","",""],"nature":["טבע","",""],"need":["צריך, צורך","",""],"negative":["שלילי","",""],"network":["רשת","",""],"new":["חדש","",""],"newscaster":["מגיש חדשות","",""],"newspaper":["עיתון","",""],"note":["לציין","",""],"noted":["ידוע, מפורסם","",""],"obviously":["ברור","",""],"occasion":["אירוע, סיבה, הזדמנות","",""],"occasional":["מדי פעם, מקרי","",""],"occasions":["הזדמנויות, מקרים","",""],"occur":["קרה, התרחש","",""],"offer":["הצעה, להציע","",""],"official":["רשמי, מאושר","",""],"officiate":["לכהן, לערוך","",""],"oil":["נפט, שמן, לשמן","",""],"ongoing":["מתמשך","",""],"option":["אפשרות, אופציה","",""],"order":["לצוות","",""],"orderly":["מסודר","",""],"orientation":["התמצאות","",""],"origin":["מקור, מוצא","",""],"original":["מקורי","",""],"originality":["מקוריות","",""],"originate":["התחיל, התהווה","",""],"outcome":["תוצאה","",""],"overcome":["להתגבר","",""],"part":["חלק","",""],"partial":["חלקי","",""],"patient":["חולה","",""],"per":["לכל","",""],"percent":["אחוז","",""],"perfect":["מושלם","",""],"pollution":["זיהום","",""],"population":["אוכלוסייה","",""],"possess":["להיות בעלים של, להחזיק ב","",""],"possession":["בעלות, חזקה","",""],"precise":["מדויק","",""],"precision":["דיוק","",""],"presence":["נוכחות","",""],"present":["הווה, נוכח, קיים","",""],"prime":["ראשוני, עיקרי, מובחר","",""],"primitive":["קדום, חסר תרבות","",""],"prior":["קודם","",""],"priority":["עדיפות","",""],"progress":["התקדמות, להתקדם","",""],"progressive":["מתקדם ומתמשך","",""],"proper":["מתאים, הולם","",""],"properly":["כראוי","",""],"protect":["להגן","",""],"provide":["לפרנס","",""],"purpose":["כוונה, מטרה","",""],"purposely":["בכוונה","",""],"quiet":["שקט","",""],"quite":["למדי","",""],"quote":["ציטוט","",""],"raise":["להעלות","",""],"range":["טווח","",""],"rational":["הגיוני, רציונאלי","",""],"rationalize":["להצדיק, להסביר","",""],"reality":["מציאות","",""],"reason":["הגיון","",""],"recession":["מיתון","",""],"recommend":["להמליץ","",""],"recycle":["למחזר","",""],"recycling":["מחזור","",""],"reduce":["להפחית","",""],"refer":["מתייחס","",""],"reference":["התייחסות, הפניה","",""],"refuse":["לסרב","",""],"regime":["שלטון, משטר","",""],"regulation":["תקנה","",""],"reign":["שלטון","",""],"reigned":["משל, שלט","",""],"relative":["קרוב -משפחה","",""],"relatively":["בקרוב, באופן יחסי","",""],"religion":["דת","",""],"repeat":["שידור/מאורע חוזר","",""],"repetition":["חזרה","",""],"reply":["להשיב","",""],"research":["מחקר","",""],"resist":["להתנגד","",""],"resistance":["התנגדות, מחתרת","",""],"resolve":["לפתור","",""],"result":["תוצאה","",""],"result in":["הסתיים ב","",""],"reveal":["לחשוף","",""],"review":["לסקור, סקירה","",""],"rigid":["נוקשה, מחמיר","",""],"rise":["עליה, לעלות","",""],"rising":["עולה","",""],"rocket":["טיל","",""],"scene":["זירה","",""],"scenery":["נוף","",""],"science":["מדע","",""],"scientist":["מדען","",""],"section":["יחידה, חלק","",""],"seem":["נראה כ -, דומה ל","",""],"sense":["חוש, לחוש","",""],"sensible":["נבון","",""],"serious":["רציני, חמור","",""],"shuttle":["מעבורת","",""],"sign":["שֶׁלֶט","",""],"signal":["אות, סימן, לאותת","",""],"similar":["דומה","",""],"simple":["פשוט","",""],"simplify":["לפשט","",""],"simply":["בפשטות","",""],"social":["חברתי","",""],"spacious":["מרווח","",""],"square":["ריבוע","",""],"stand":["לעמוד","",""],"standardize":["לתקנן","",""],"subject":["נושא","",""],"subjective":["אישי, משוחד בדעתו","",""],"suburban":["פרברי","",""],"succeed":["הצליח","",""],"success":["הצלחה","",""],"sum":["סכום, סך, לסכם","",""],"sum up":["לסכם","",""],"summarize":["לסכם","",""],"summary":["סיכום, תמצית","",""],"surround":["להקיף","",""],"surrounding":["מקיף, סובב","",""],"task":["משימה","",""],"territory":["תחום, שטח","",""],"thereby":["ולכן, גרם ל","",""],"title":["כותרת","",""],"touch":["מגע, לגעת","",""],"trade":["לסחור, מסחר","",""],"train":["רכבת","",""],"trial":["משפט","",""],"turn":["לפנות, סיבוב","",""],"uncharted":["לא מתועד","",""],"uniform":["אחיד","",""],"unify":["לאחד","",""],"union":["איגוד, איחוד","",""],"universe":["יקום","",""],"uphold":["להחזיק, לתמוך, לדגול","",""],"volume":["נפח","",""],"war":["מלחמה","",""],"warfare":["לוחמה","",""],"warrior":["לוחם","",""],"waste":["הפסולת","",""],"watch":["שעון","",""],"widespread":["נפוץ","",""],"wild":["פראי, טבע","",""],"wilderness":["ערבה, שממה","",""],"wool":["צמר","",""]},"4":{"abandon":["לנטוש, לזנוח","",""],"abduct":["חטיפה, לחטוף","",""],"abide":["לציית","",""],"absence":["מחסור","",""],"absent":["חסר, לא נוכח","",""],"absorb":["לספוג","",""],"abundance":["שפע","",""],"abuse":["להתעלל, לנצל","",""],"accumulate":["לצבור, לאסוף","",""],"acquire":["לרכוש, להשיג","",""],"acquisition":["רכישה","",""],"adopt":["לאמץ","",""],"adventure":["הרפתקה","",""],"affect":["להשפיע","",""],"affection":["חיבה","",""],"affluence":["שפע","",""],"affluent":["שופע, עשיר","",""],"aid":["עזרה, לסייע","",""],"airborne":["נישא באוויר","",""],"airline":["חברת תעופה","",""],"airplane":["אווירון, מטוס","",""],"alike":["דומה","",""],"allow":["להרשות","",""],"ally (allies)":["( בן- ברית (בנות -ברית","",""],"alter":["שינה ,לשנות","",""],"alterations":["שינויים","",""],"alternately":["לסירוגין","",""],"amateur":["חובבן","",""],"amend":["תיקון, שינוי לטובה","",""],"analyze":["לנתח","",""],"anticipate":["לצפות","",""],"anxious":["חרד","",""],"apparent":["גלוי","",""],"apparently":["כנראה","",""],"apply":["לפנות","",""],"appreciate":["עליה בערך","",""],"appreciation":["הערכה","",""],"appropriately":["בהתאם","",""],"arise":["להופיע, לעלות","",""],"arise, arose":["לקום, קם","",""],"artificial":["מלאכותי","",""],"aside":["הצידה","",""],"assess":["להעריך, לאמוד","",""],"asset":["נכס","",""],"assign":["למנות, להקצות","",""],"assignment":["משימה, מטלה","",""],"attain":["להשיג, להגיע","",""],"attend":["להשתתף, להיות נוכח","",""],"attendant":["משרת, מטפל, מלווה","",""],"authority":["סמכות","",""],"authorize":["להרשות, להסמיך","",""],"autumn":["סתיו","",""],"await":["להמתין","",""],"awareness":["מודעות","",""],"bare":["חשוף, ריק, לחשוף","",""],"behave":["להתנהג","",""],"behavior":["התנהגות","",""],"bounce":["לקפץ, ניתור","",""],"brilliant":["מבריק","",""],"burden":["עול","",""],"bush":["ערבה","",""],"cable":["כבל","",""],"calculate":["לחשב","",""],"calculator":["מחשבון","",""],"campaign":["מערכה, מסע","",""],"candid":["כנה, ישיר","",""],"candidate":["מועמד","",""],"case":["תיבה","",""],"categorize":["לקטלג, למיין, לסווג","",""],"cautious":["זהיר","",""],"century":["מאה שנים","",""],"charge":["להאשים","",""],"chart":["גיליון, תרשים","",""],"claim":["תביעה","",""],"coincide":["להקביל, לחפוף","",""],"colossal":["עצום","",""],"commence":["להתחיל","",""],"compress":["לדחוס","",""],"comprise":["לכלול","",""],"concept":["רעיון, מושג","",""],"conception":["תפיסה","",""],"confer":["להעניק, להסביר","",""],"conference":["ועידה","",""],"confide":["( לשתף, לספר (סוד","",""],"confident":["בטוח בעצמו","",""],"conflict":["עימות, סכסוך","",""],"conjecture":["סברה, לשער","",""],"connect":["לחבר","",""],"consequence":["תוצאה","",""],"consider":["לקחת בחשבון, לשקול","",""],"considerable":["הרבה, רבות","",""],"consume":["לצרוך","",""],"consumers":["צרכנים","",""],"contain":["להכיל, מכיל","",""],"contemporary":["עכשווי","",""],"convenient":["נוח","",""],"conveniently":["באופן נח","",""],"convention":["מוסכמה","",""],"conventional":["שגרתי, קונבנציונאלי","",""],"convert":["להמיר","",""],"convey":["למסור, להעביר","",""],"courageous":["אמיץ","",""],"create":["ליצור","",""],"creator":["יוצר","",""],"creature":["יצור","",""],"currency":["מטבע","",""],"custom":["מותאם אישית","",""],"customer":["לקוח, צרכן","",""],"customize":["להתאים באופן אישי","",""],"damage":["נזק, לגרום נזק","",""],"decade":["עשור","",""],"defeat":["תבוסה","",""],"defeated":["הובס","",""],"defend":["להגן","",""],"defense":["הגנה","",""],"deficiency":["מחסור","",""],"deliver":["לשלוח","",""],"delivery":["משלוח","",""],"demographic":["דמוגרפי","",""],"demonstrate":["להדגים","",""],"destination":["יעד","",""],"detach":["להתנתק","",""],"deteriorate":["להידרדר","",""],"diagnose":["לאבחן","",""],"director":["במאי","",""],"discriminate":["להפלות","",""],"dismiss":["לבטל, לפטר, לשחרר","",""],"disposable":["חד -פעמי","",""],"disrupt":["להפריע, לשבש","",""],"distribute":["להפיץ","",""],"distribution":["הפצה","",""],"document":["מסמך","",""],"duty":["תפקיד, חובה","",""],"earn":["להרוויח","",""],"economy":["כלכלה","",""],"edge":["קצה, חספוס","",""],"elaborate":["לפרט, להרחיב","",""],"elect":["לבחור","",""],"emerge":["להגיח, להופיע","",""],"emigrate":["להגר","",""],"eminent":["בולט, בכיר","",""],"enclose":["לצרף","",""],"enlarge":["להגדיל","",""],"ensure":["להבטיח","",""],"environment":["סביבה","",""],"epidemic":["מגיפה, אפידמיה","",""],"equivalent":["מקבילה","",""],"erase":["למחוק","",""],"eraser":["מחק","",""],"establish":["לייסד","",""],"estimate":["להעריך, לאמוד","",""],"ethical":["אתי, מוסרי","",""],"evade":["התחמק","",""],"evidence":["ראיה","",""],"exception":["יוצא מהכלל","",""],"execute":["להוציא להורג","",""],"facility":["מתקן","",""],"fail":["להיכשל","",""],"failure":["כשלון","",""],"faith":["אמון","",""],"fall":["סתיו","",""],"feature":["תכונה, מאפיין","",""],"flourish":["לשגשג, לפרוח","",""],"follow":["לעקוב, לציית","",""],"for the sake of":["למען","",""],"force":["כוח","",""],"forsake":["לזנוח","",""],"found":["לייסד","",""],"foundation":["יסוד","",""],"function":["תפקוד, לתפקד","",""],"future":["עתיד","",""],"gather":["אסף","",""],"global":["עולמי, גלובאלי","",""],"goal":["מטרה","",""],"goods":["סחורה, טובין","",""],"grasp":["אחיזה","",""],"group":["קבוצה, לקבץ","",""],"hardly":["בקושי","",""],"hesitate":["להסס","",""],"hold back":["לעכב, למנוע","",""],"homeland":["מולדת","",""],"honest":["הגון","",""],"honor":["לכבד, כבוד","",""],"huge":["עצום, ענק","",""],"idea":["רעיון","",""],"identify":["לזהות","",""],"illegal":["לא חוקי","",""],"image":["דמות, תמונה","",""],"imagination":["דמיון","",""],"imagine":["לדמיין","",""],"impair":["לפגום, להחליש","",""],"impart":["להעביר, להקנות","",""],"impartially":["באופן הוגן, ללא אפליה","",""],"import":["לייבא","",""],"impose":["לכפות","",""],"impossible":["בלתי אפשר","",""],"imprisoned":["כלוא","",""],"improve":["לשפר","",""],"improvise":["לאלתר","",""],"in order":["תקין, מסודר","",""],"increase":["להגדיל, להגביר","",""],"incredible":["מדהים","",""],"individual":["יחיד, אינדיבידואל","",""],"industry":["תעשייה","",""],"inferred":["נגזר, משתמע","",""],"inform":["להודיע, לעדכן","",""],"information":["מידע","",""],"innovate":["לחדש, להמציא","",""],"intention":["כוונה","",""],"intentional":["מכוון","",""],"interact":["לתקשר, להשפיע","",""],"interest":["ריבית","",""],"internal":["פנימי","",""],"interpretation":["פרשנות","",""],"involve":["לערב","",""],"isolate":["לבודד","",""],"judgment":["שיפוט","",""],"know, knew":["לדעת, ידע","",""],"knowledge":["יֶדַע","",""],"known":["ידוע","",""],"laid":["מונח","",""],"lane":["מסלול","",""],"launch":["להשיק, להתחיל","",""],"limit":["גבול, לשים גבול, מוגבל","",""],"limitation":["מגבלה","",""],"lobby":["לשדל","",""],"mammal":["יונק","",""],"moderate":["מתון","",""],"modernize":["להפוך למודרני","",""],"mold":["לעצב","",""],"motivate":["לדרבן","",""],"negate":["לשלול","",""],"neutral":["ניטרלי","",""],"numerous":["מרובה","",""],"nutrition":["תזונה","",""],"object":["פריט, אובייקט","",""],"obtain":["להשיג","",""],"operate":["לפעול, להפעיל, לתפעל","",""],"operation":["ניתוח","",""],"opposition":["אופוזיציה, התנגדות","",""],"ordinary":["רגיל","",""],"organ":["איבר","",""],"organization":["ארגון","",""],"organize":["לארגן","",""],"outbreak":["התפרצות","",""],"overdo":["להפריז, להגזים","",""],"overdue":["שעבר זמן ההגשה שלו","",""],"pace":["קצב","",""],"pair":["זוג","",""],"parent":["הורה","",""],"parenting":["הורות","",""],"participate":["השתתף","",""],"particular":["מיוחד, לא רגיל","",""],"particulars":["פריטים","",""],"pause":["הפסקה, להפסיק","",""],"persist":["להתמיד, להתעקש","",""],"person":["אדם","",""],"personal":["אישי","",""],"personality":["אישיות","",""],"phase":["שלב, דרגה","",""],"phenomenon":["תופעה","",""],"pioneer":["חלוץ","",""],"position":["תפקיד, משרה","",""],"possible":["אפשרי","",""],"poverty":["עוני","",""],"poverty-stricken":["מוכה עוני","",""],"precedent":["תקדים","",""],"preceding":["קודם","",""],"predecessors":["קודמים","",""],"predestined":["נקבע מראש","",""],"predict":["לצפות מראש","",""],"prediction":["חיזוי, ניבוי","",""],"predictive":["נבואי","",""],"premature":["מוקדם מדי","",""],"private":["פרטי","",""],"produce":["תוצר, ירקות ופירות","",""],"product":["מוצר","",""],"profession":["מקצוע","",""],"professional":["מקצועי","",""],"profound":["מוחלט, מאוד","",""],"profoundly":["עמוקות","",""],"promise":["הבטחה, להבטיח","",""],"property":["תכונה","",""],"protest":["למחות, הפגנה","",""],"prove":["להוכיח","",""],"public":["ציבורי","",""],"race":["גזע","",""],"rail":["מעקה, מסילה","",""],"railroad":["מסילת רכבת","",""],"random":["מקרי, אקראי","",""],"randomly":["באקראיות","",""],"reaction":["תגובה","",""],"reasonable":["הגיוני","",""],"reconstruct":["לשחזר","",""],"refute":["להפריך","",""],"regain":["להשיג מחדש","",""],"regard":["להתייחס, להחשיב","",""],"relate":["להתייחס, לקשר","",""],"release":["לשחרר","",""],"relevant":["רלוונטי, קשור","",""],"relocate":["למקם מחדש","",""],"reluctant":["מסויג, לא מעוניין","",""],"rely":["להסתמך","",""],"remote":["מרוחק","",""],"report":["דיווח, לדווח","",""],"reporter":["עיתונאי","",""],"request":["בקשה, לבקש","",""],"require":["לדרוש, דרישה","",""],"restore":["לשקם, לשחזר","",""],"resume":["להמשיך","",""],"resumption":["חידוש","",""],"rule":["לשלוט, לפסוק, להחליט","",""],"ruler":["מושל, שליט","",""],"season":["עונה","",""],"secure":["להבטיח, לשמור, להגן","",""],"selective":["סלקטיבי","",""],"service":["שירות","",""],"share":["לחלוק","",""],"ship":["לשלוח","",""],"shipment":["משלוח","",""],"significance":["משמעות, חשיבות","",""],"significant":["משמעותי","",""],"simulate":["לדמות, לחקות","",""],"size":["גודל","",""],"soar":["להמריא","",""],"soil":["אדמה","",""],"solicit":["לשדל / להדיח","",""],"solitude":["בדידות","",""],"solution":["פתרון","",""],"sort":["למיין","",""],"source":["מקור","",""],"span":["מרווח","",""],"splendid":["נהדר, מהולל","",""],"spring":["אביב","",""],"spring, sprang":["קפיץ ; לקפוץ, קפץ","",""],"stability":["יציבות","",""],"stamina":["כושר עמידה, סיבולת","",""],"standard":["רמה, תקן, מקובל","",""],"state":["מדינה","",""],"statement":["הצהרה","",""],"steady":["קבוע, יציב","",""],"stimulate":["לעורר, להמריץ","",""],"stock":["מניה","",""],"strange":["מוזר","",""],"strive":["לשאוף","",""],"successor":["יורש","",""],"summer":["קיץ","",""],"superior":["עליון","",""],"supervise":["לפקח","",""],"support":["תמיכה, לתמוך","",""],"supportive":["תומך","",""],"survey":["סקר","",""],"survive":["לשרוד","",""],"swift":["מהיר","",""],"temporary":["זמני","",""],"thick":["עבה","",""],"thrive":["לשגשג","",""],"tradition":["מסורת","",""],"traffic":["תנועה","",""],"traffic jam":["פקק תנועה","",""],"transfer":["העברה","",""],"tribe":["שבט","",""],"unaware":["לא מודע","",""],"uncertain":["לא בטוח","",""],"unclear":["לא ברור","",""],"uncover":["לחשוף, לגלות","",""],"unfold":["נפרש, נפתח, התגלה","",""],"unit":["יחידה","",""],"unstable":["לא יציב","",""],"update":["עדכון, לעדכן","",""],"upgrade":["לשדרג","",""],"valid":["תקף","",""],"validate":["אימת, נתן תוקף","",""],"violence":["אלימות","",""],"violent":["אלים","",""],"widely":["בצורה נרחבת","",""],"widen":["להרחיב","",""],"winter":["חורף","",""]},"5":{"admirable":["נערץ, ראוי להערצה","",""],"admire":["להעריץ","",""],"adore":["העריץ, אהב","",""],"adverse":["שלילי","",""],"analog":["( אנלוגי (ההיפך מדיגיטלי","",""],"analogy":["אנלוגיה, הקבלה","",""],"ancestor":["אב קדמון","",""],"ancestry":["מוצא","",""],"ancient":["קדום, עתיק","",""],"assemble":["להרכיב, להתאסף","",""],"assist":["לעזור, לסייע","",""],"astonishment":["תדהמה, השתאות","",""],"astound":["להדהים","",""],"at your disposal":["לרשותך","",""],"author":["סופר, מחבר","",""],"avert":["להסיט, להפנות, למנוע","",""],"background":["רקע","",""],"benefactors":["נדבנים, תורמים","",""],"beneficial":["מועיל, רווחי","",""],"bold":["מודגש","",""],"botanist":["בוטנאי","",""],"boundary":["גבול","",""],"branch":["ענף, סניף","",""],"broaden":["להרחיב","",""],"canal":["תעלה","",""],"cast":["צוות שחקנים","",""],"caste":["מעמד חברתי","",""],"castle":["טירה","",""],"casual":["אגבי, רגיל, יומיומי","",""],"chief":["צ'יף","",""],"citizen":["אזרחים","",""],"clarify":["להבהיר","",""],"climate":["אקלים","",""],"coast":["חוף","",""],"coastline":["קו/רצועת חוף","",""],"coat":["(' שכבה (של צבע, בטון וכו","",""],"coexistence":["דו -קיום","",""],"collaborate":["לשתף פעולה","",""],"collapse":["להתמוטט","",""],"column":["טור","",""],"comfort":["נחמה","",""],"comfortable":["נוח","",""],"commerce":["מסחר","",""],"commercial":["סרטון פרסומת","",""],"commit":["להתחייב","",""],"committee":["ועדה","",""],"complex":["מסובך","",""],"complication":["סיבוך","",""],"comply":["להסכים, לציית","",""],"compromise":["להתפשר","",""],"concern":["דאגה, עניין","",""],"condition":["להכשיר, להתאים","",""],"conduct":["לנהל, לקיים","",""],"confront":["להתעמת, לעמת","",""],"confrontation":["עימות","",""],"consideration":["התחשבות","",""],"considering":["מתחשב","",""],"consistent":["עקבי","",""],"constant":["קבוע, רצוף","",""],"constitute":["מהווים","",""],"construct":["לבנות","",""],"consult":["להתייעץ","",""],"context":["הקשר","",""],"contract":["להתכווץ","",""],"contradiction":["סתירה","",""],"convoy":["שיירה","",""],"criteria":["אמת מידה, אבן בחן","",""],"critic":["מבקר","",""],"criticize":["לבקר","",""],"declaration":["הכרזה, הצהרה","",""],"declare":["להכריז","",""],"dedicate":["להקדיש","",""],"dedicated":["מסור","",""],"degenerate":["להתנוון","",""],"degree":["מעלה","",""],"delay":["עיכוב, לאחר, לדחות","",""],"delight":["תענוג","",""],"design":["לתכנן, לעצב","",""],"designer":["מעצב","",""],"detect":["לאתר, לגלות","",""],"determine":["לקבוע","",""],"determined":["נחוש, נחרץ","",""],"develop":["לפתח","",""],"development":["התפתחות, פיתוח","",""],"diagram":["תרשים, דיאגרמה","",""],"dialect":["ניב","",""],"difference":["הבדל","",""],"differences":["חילוקי דעות","",""],"different":["שונה","",""],"differentiate":["להבדיל, להבחין","",""],"diminish":["לצמצם","",""],"disaster":["אסון","",""],"disobey":["להפר, לא לציית","",""],"dispose":["להיפטר","",""],"distance":["מרחק","",""],"drastic":["דרסטי","",""],"effective":["יעיל, אפקטיבי","",""],"efficient":["יעיל","",""],"effort":["מאמץ","",""],"electricity":["חשמל","",""],"emotion":["רגש","",""],"enact":["לחוקק","",""],"episode":["פרק","",""],"ethnic":["אתני","",""],"excel":["להצטיין","",""],"excellent":["מצוין","",""],"exhausting":["מתיש, מעייף","",""],"experience":["ניסיון, לחוות","",""],"experiment":["ניסוי, להתנסות","",""],"exploit":["לנצל, להפיק תועלת","",""],"export":["ייצוא","",""],"extensive":["נרחב","",""],"facilitate":["לסייע, לעזור, להקל","",""],"fall apart":["להתפרק","",""],"fast":["מהיר","",""],"fasten":["להדק","",""],"feminine":["נשי","",""],"fine":["משובח, מצוין","",""],"fit":["בכושר","",""],"flight":["טיסה","",""],"forceful":["חזק","",""],"forecast":["תחזית","",""],"foreign":["זר, נוכרי","",""],"forfeit":["לוותר, להפסיד","",""],"fortunate":["בעל מזל","",""],"fortune":["עושר","",""],"frame":["מסגרת, למסגר","",""],"fund":["לממן","",""],"fundamental":["( בסיסי (פונדמנטלי","",""],"fundraiser":["מגייס כספים","",""],"funds":["כסף, הון, מקור מימון","",""],"gap":["פער","",""],"generated":["יצר","",""],"generation":["דור","",""],"govern":["למשול","",""],"government":["ממשל","",""],"governor":["מושל","",""],"gratify":["לרצות","",""],"ground":["בסיס, אדמה","",""],"grow":["לגדול, לגדל","",""],"grow up":["להתבגר, לגדול","",""],"guilty":["אשם","",""],"harsh":["נוקשה, אכזרי","",""],"hollow":["חלול","",""],"hundred":["מאה","",""],"hunt":["לצוד, ציד","",""],"hunter":["צייד","",""],"ignorance":["בורות","",""],"ignorant":["בור, חסר השכלה","",""],"ignore":["להתעלם","",""],"illiterate":["בור, אנאלפבית","",""],"impact":["השפעה","",""],"impatient":["חסר סבלנות","",""],"impress":["להרשים","",""],"impressive":["מרשים","",""],"inactivity":["חוסר פעילות","",""],"include":["לכלול","",""],"inclusive":["כולל","",""],"industrious":["חרוץ, שקדן","",""],"infected":["הודבק","",""],"infection":["זיהום","",""],"innocent":["חף מפשע","",""],"institute":["לכונן","",""],"instruction":["הוראה, הדרכה","",""],"insurance":["ביטוח","",""],"insure":["להבטיח","",""],"investing":["להשקיע","",""],"investment":["השקעה","",""],"investor":["משקיע","",""],"irrigation":["השקיה","",""],"lapse":["פרק זמן, פקיעה, סיום","",""],"leather":["עור","",""],"lecture":["הרצאה","",""],"legislate":["לחוקק","",""],"legislation":["חקיקה","",""],"length":["אורך","",""],"lower":["להנמיך","",""],"lung":["ריאה","",""],"maintain":["לשמר","",""],"major":["( סולם מז'ור (במוזיקה","",""],"majority":["רוב","",""],"male":["זכר","",""],"manage":["לנהל","",""],"management":["ניהול","",""],"manuscript":["כתב יד","",""],"marine":["ימי","",""],"maritime":["ימי","",""],"market":["שוק","",""],"marketing":["שיווק, לשווק","",""],"mass":["מסה","",""],"material":["חומר, חומרני","",""],"measure":["אמצעי","",""],"merge":["למזג, לחבר","",""],"merger":["מיזוג","",""],"message":["הודעה","",""],"method":["שיטה","",""],"mild":["מתון, עדין","",""],"military":["צבא, צבאי","",""],"minor":["קטן, שולי","",""],"minority":["מיעוט","",""],"misconception":["דעה מוטעית","",""],"mission":["משימה","",""],"mode":["מצב, אופן, צורה","",""],"model":["דגם, מודל, דוגמן","",""],"modest":["צנוע","",""],"modify":["לשנות, להתאים","",""],"monumental":["גדול, אדיר","",""],"negotiate":["לשאת ולתת","",""],"negotiation":["משא ומתן","",""],"nominated":["מועמד","",""],"nuclear":["גרעיני","",""],"observer":["משקיף","",""],"obsolete":["מיושן","",""],"occupy":["להעסיק","",""],"occurrence":["התרחשות","",""],"odd":["אי זוגי","",""],"omission":["השמטה, הזנחה","",""],"omit":["להשמיט, להזניח","",""],"opinion":["דעה","",""],"opponent":["יריב, מתנגד","",""],"opportunity":["הזדמנות","",""],"organic":["אורגני","",""],"overlaps":["חופף","",""],"own":["בעלות על משהו","",""],"owner":["בעלים","",""],"paramount":["בעל חשיבות עליונה","",""],"pass":["להעביר, למסור","",""],"pedestrian":["הולך רגל","",""],"perhaps":["אולי","",""],"period":["נקודה","",""],"permanent":["קבוע","",""],"persecution":["( רדיפה (דתית","",""],"planet":["כוכב לכת","",""],"plant":["צמח, עציץ, לשתול","",""],"poll":["סקר, הצבעה","",""],"populous":["מאוכלס בצפיפות","",""],"post":["עמוד","",""],"postage":["דבר דואר","",""],"postpone":["לדחות","",""],"powerful":["רב כוח","",""],"preferable":["עדיף","",""],"presume":["להניח","",""],"priest":["כומר","",""],"privilege":["זכות יתר, פריביליגיה","",""],"profit":["רווח","",""],"profitable":["רווחי","",""],"publication":["הוצאה לאור","",""],"publicized":["פורסם","",""],"publish":["לפרסם, להוציא לאור","",""],"publisher":["מוציא לאור","",""],"qualify":["להיות מוסמך","",""],"quality":["איכות","",""],"quarter":["רבע","",""],"radiation":["קרינה","",""],"rare":["( נא (בשר","",""],"raw":["גולמי, גס","",""],"receive":["לקבל","",""],"recent":["שארע לאחרונה","",""],"recently":["לאחרונה","",""],"recognition":["הכרה","",""],"record":["לתעד","",""],"recover":["להתאושש","",""],"recreate":["לשחזר, ליצור מחדש","",""],"relax":["להירגע","",""],"reliance":["הסתמכות","",""],"remains":["נשאר, עדיין","",""],"remove":["להסיר","",""],"renew":["לחדש","",""],"renown":["ידוע","",""],"repair":["לתקן","",""],"replace":["להחליף","",""],"replacement":["מחליף","",""],"rescue":["להציל","",""],"resemble":["דומה","",""],"residence":["מגורים","",""],"resident":["תושב קבע","",""],"resource":["משאב","",""],"resourceful":["בעל תושייה","",""],"restrain":["לרסן","",""],"retain":["להחזיק, לשמור","",""],"retrieve":["להשיב","",""],"revenue":["הכנסה, רווח","",""],"route":["מסלול, דרך","",""],"ruin":["להרוס","",""],"ruins":["הריסות, עיי חורבות","",""],"sample":["דוגמית","",""],"satisfaction":["שביעות רצון","",""],"scatter":["לפזר","",""],"schedule":["לוח זמנים","",""],"sensitive":["רגיש","",""],"sensitivity":["רגישות","",""],"sentence":["גזר דין","",""],"servant":["משרת","",""],"serve":["( לְרַצּוֹת (עונש","",""],"session":["מושב","",""],"sharp":["חד","",""],"sheer":["משופע, תלול","",""],"single":["יחיד","",""],"skepticism":["ספקנות","",""],"skill":["יכולת, מיומנות","",""],"sophisticated":["מתוחכם","",""],"spare":["מיותר, עודף","",""],"specialize":["להתמחות","",""],"species":["מין, זן","",""],"specify":["לפרט","",""],"spectator":["צופה, משקיף","",""],"speech":["דיבור","",""],"spoil":["לקלקל","",""],"stack":["ערמה","",""],"staple":["להדק","",""],"station":["להציב","",""],"stem":["גזע","",""],"stomach":["בטן, קיבה","",""],"strategy":["אסטרטגיה","",""],"subdue":["להכניע","",""],"submit":["להיכנע","",""],"subtle":["מעודן","",""],"suitable":["ראוי, מתאים, יאה","",""],"superb":["( מעולה (איכותי","",""],"superficial":["שטחי","",""],"suppression":["דיכוי","",""],"sustain":["לתמוך","",""],"symbol":["סמל","",""],"symbolize":["לסמל","",""],"take place":["התרחש","",""],"temple":["מקדש","",""],"terms":["מונחים","",""],"thousand":["אלף","",""],"tormented":["לייסר, לענות","",""],"tour":["סיור","",""],"tourist":["תייר","",""],"trust":["אמון, לבטוח","",""],"type":["סוג","",""],"typically":["אופייני","",""],"unbelievable":["לא יאמן","",""],"underlies":["מונח ביסוד, נמצא מתחת ל","",""],"undertake":["לקחת על עצמך","",""],"unemployed":["מובטל","",""],"unexplored":["לא נחקר, לא נבדק","",""],"unfamiliar":["לא מוכר","",""],"unfortunate":["מצער","",""],"unfortunately":["למרבה הצער","",""],"unimaginable":["בלתי נתפס","",""],"unique":["מיוחד","",""],"unite":["לאחד","",""],"unlock":["לפתוח, לשחרר","",""],"unnecessary":["לא הכרחי","",""],"uprising":["התקוממות, מרד","",""],"urban":["עירוני","",""],"urge":["לעודד, לדחוף ; דחף, רצון, תשוקה","",""],"urgent":["דחוף","",""],"vaccine":["חיסון","",""],"variable":["משתנה","",""],"variation":["שינוי, וריאציה","",""],"variety":["מבחר, מגוון","",""],"various":["מגוון","",""],"vast":["גדול","",""],"vertical":["מאונך","",""],"vigorously":["במרץ","",""],"violate":["להפר, לחלל","",""],"violation":["עבירה, הפרה","",""],"volunteer":["להתנדב, מתנדב","",""],"vote":["קול, הצבעה, להצביע","",""],"wage":["משכורת","",""],"ward":["מחלקה","",""],"wide":["רחב","",""],"willing":["מוכן","",""],"wise":["חכם, פיקח","",""],"wish":["משאלה, לבקש","",""],"withhold":["לעכב, לעצור, לא לתת","",""],"worldwide":["כלל עולמי, בכל העולם","",""],"worse":["גרוע יותר","",""],"worthy":["ראוי","",""],"yield":["להניב, להפיק","",""],"zone":["אזור","",""]},"6":{"absurd":["מגוחך, לא סביר","",""],"accelerate":["להאיץ","",""],"acclaim":["להריע, לשבח","",""],"accommodate":["לאכסן, לשכן","",""],"accompany":["ללוות","",""],"accustomed":["מורגל","",""],"aggressive":["תוקפני, אלים","",""],"agriculture":["חקלאות","",""],"allergic":["אלרגי","",""],"amass":["לצבור, לערום","",""],"amaze":["להדהים","",""],"appeal":["לבקש","",""],"applicant":["מועמד","",""],"arousing":["מעורר","",""],"as many as":["( רבים כמו (מספר גדול","",""],"ascertain":["לוודא","",""],"aspiration":["שאיפה, חלום","",""],"audit":["ביקורת","",""],"award":["פרס, להעניק פרס","",""],"bank":["גדה","",""],"betray":["לבגוד","",""],"blank":["ריק, רווח","",""],"boost":["דחף, המריץ","",""],"broadcast":["לשדר","",""],"cage":["כלוב, לכלוא","",""],"cancer":["( סרטן (מחלה","",""],"capture":["ללכוד","",""],"cargo":["מטען","",""],"carve":["לחרוט","",""],"cemetery":["בית קברות","",""],"certify":["להצהיר, לאשר","",""],"chapter":["פרק","",""],"church":["כנסיה","",""],"circulate":["להפיץ","",""],"colleague":["עמית, קולגה","",""],"collect":["לאסוף","",""],"collide":["להתנגש","",""],"collision":["התנגשות","",""],"commendably":["באופן ראוי לשבח","",""],"commends":["לציין לשבח","",""],"commentary":["פרשנות","",""],"companion":["בן -זוג","",""],"compatible":["מתאים, ראוי","",""],"compel":["לאלץ, לחייב","",""],"compensate":["לפצות","",""],"compile":["לאסוף, לקבץ","",""],"conceal":["להסתיר","",""],"conceive":["לעבר","",""],"concerted":["מתואם","",""],"concur":["להסכים","",""],"concurrence":["להתרחש בו זמנית","",""],"condemned":["נידון ל","",""],"confess":["להודות","",""],"confession":["וידוי","",""],"confinement":["מאסר, ריתוק","",""],"confiscate":["להחרים","",""],"conform":["להתאים, להסתגל","",""],"confuse":["לבלבל","",""],"confusion":["בלבול","",""],"conquer":["לכבוש","",""],"conquest":["כיבוש","",""],"conscious":["מודע","",""],"conservation":["שימור","",""],"conservative":["שמרני","",""],"conserve":["לשמר","",""],"contend":["להתמודד, לטעון, להיאבק","",""],"content":["תוכן","",""],"continent":["יבשת","",""],"contrast":["ניגוד","",""],"contribute":["לתרום","",""],"controversial":["שנוי במחלוקת","",""],"controversy":["מחלוקת","",""],"convene":["לכנס","",""],"conversation":["שיחה","",""],"convince":["לשכנע","",""],"coordination":["קואורדינציה, תיאום","",""],"coordinator":["מתאם","",""],"correspond":["להתאים","",""],"correspondence":["התכתבות","",""],"crack":["סדק, לסדוק","",""],"crave":["להשתוקק","",""],"crime":["פשע","",""],"crude":["גולמי","",""],"cuisine":["מטבח, בישול","",""],"curse":["קללה, לקלל","",""],"darkness":["חשיכה","",""],"debate":["ויכוח, דיון","",""],"deceased":["נפטר","",""],"deceive":["להונות","",""],"deliberate":["לשקול, לבחון, לדון","",""],"deliberation":["דיון","",""],"delusions":["אשליות, הזיות","",""],"denial":["הכחשה","",""],"depend on":["תלוי ב","",""],"describe":["לתאר","",""],"desolate":["שומם, נטוש","",""],"destroy":["להרוס","",""],"destructive":["הרסני","",""],"detract":["להפחית, לגרוע","",""],"deviant":["סוטה","",""],"device":["מכשיר","",""],"devise":["לתכנן, להמציא","",""],"dictate":["להכתיב, לפקד","",""],"disorder":["הפרעה","",""],"display":["להציג","",""],"disregard":["להתעלם","",""],"dissolve":["להתמוסס","",""],"distract":["להסיח את הדעת","",""],"district":["מחוז","",""],"divine":["אלוהי","",""],"divinity":["אלוהות","",""],"downhill":["מדרון, מורד","",""],"ease":["להקל, קלוּת","",""],"easily":["בקלות","",""],"effect":["רושם, השפעה","",""],"emblem":["סמל","",""],"encourage":["לעודד","",""],"engrave":["לחרוט","",""],"enhance":["להעצים","",""],"entirely":["לחלוטין","",""],"enzyme":["אנזים","",""],"equality":["שוויון, במידה שווה","",""],"equates":["להשוות, להתאים","",""],"evoke":["לעורר, להעלות","",""],"evolutionary":["התפתחותי","",""],"evolved":["התפתח","",""],"excessively":["בצורה מוגזמת","",""],"exchange":["להחליף, חלופה","",""],"exclude":["למנוע, לשלול, להרחיק, לגרש","",""],"exclusive":["בלעדי","",""],"exclusively":["באופן בלעדי, רק","",""],"excuse":["תירוץ","",""],"explicit":["מפורש, ברור, בוטה","",""],"explore":["לחקור, ללמוד","",""],"exposure":["חשיפה","",""],"exquisite":["חד, מעודן, אנין","",""],"extend":["להאריך, להרחיב","",""],"extension":["שלוחה","",""],"exterior":["חיצוני","",""],"external":["חיצוני","",""],"extinction":["הכחדה","",""],"extract":["לתמצת, להפיק","",""],"factor":["גורם","",""],"favor":["להעדיף","",""],"favored":["מועדף","",""],"fight, fought":["לריב, רב","",""],"figure":["דמות","",""],"flat":["דירה","",""],"flew":["עף","",""],"fly":["זבוב","",""],"foil":["לסכל","",""],"forerunner":["שליח, חלוץ, מבשר","",""],"fossil":["מאובן","",""],"genius":["גאון","",""],"gentle":["עדין","",""],"genuine":["אמיתי, מקורי","",""],"grant":["להעניק, מענק","",""],"guard":["שומר, לשמור","",""],"halt":["לעצור ,להפסיק, עצירה","",""],"handle":["להתמודד","",""],"harder":["קשה יותר","",""],"harmful":["מזיק","",""],"harmless":["שאינו מזיק","",""],"hazardous":["מסוכן","",""],"hectic":["קדחתני","",""],"heir":["יורש","",""],"heredity":["תורשה","",""],"hospital":["בית חולים","",""],"hospitalize":["לאשפז","",""],"hunger":["רעב","",""],"ideal":["אידיאל, אידיאלי","",""],"immense":["כביר, עצום","",""],"immigrate":["להגר","",""],"impulse":["דחף","",""],"impulsively":["ללא שיקול דעת","",""],"in favor of":["לטובת","",""],"incentive":["תמריץ","",""],"incidence":["( כמות, הִקָּרוּת (משהו שקורה","",""],"indifference":["אדישות","",""],"infinite":["אינסופי","",""],"innate":["מולד","",""],"inner":["פנימי","",""],"inquire":["לתשאל","",""],"inquiry":["חקירה","",""],"insist":["להתעקש","",""],"inspiration":["השראה","",""],"inspiring":["נותן השראה","",""],"interior":["פנימי","",""],"interrupt":["להפריע","",""],"intersection":["צומת, הצטלבות","",""],"intervene":["להתערב","",""],"intervention":["התערבות","",""],"invent":["להמציא","",""],"inventor":["ממציא","",""],"inventory":["מצאי","",""],"invisible":["בלתי נראה","",""],"invite":["להזמין","",""],"Jew":["יהודי","",""],"kind":["טוב לב, אדיב, נעים","",""],"landmark":["אבן דרך","",""],"landscape":["נוף","",""],"lean":["להישען","",""],"legible":["קריא","",""],"lens":["עדשה","",""],"license":["לאשר, להתיר","",""],"lifetime":["תקופת החיים, במשך החיים","",""],"literary":["ספרותי","",""],"literate":["משכיל, מלומד","",""],"literature":["ספרות","",""],"load":["להעמיס","",""],"losing":["מפסיד","",""],"mail":["דואר","",""],"mailman":["דוור","",""],"malnutrition":["תת -תזונה","",""],"mate":["להזדווג","",""],"maturity":["בגרות","",""],"mayor":["ראש עיר","",""],"mediate":["לגשר, לתווך","",""],"mediocre":["( בינוני (במובן שלילי","",""],"miserable":["אומלל","",""],"moist":["לחות","",""],"moral":["מוסר","",""],"morale":["מורל","",""],"necessary":["הכרחי","",""],"neglect":["להזניח, הזנחה","",""],"negligence":["הזנחה, רשלנות","",""],"nocturnal":["לילי","",""],"noon":["(12:00) צהריים","",""],"notable":["נכבד","",""],"notice":["התראה","",""],"notify":["להודיע, ליידע","",""],"obedience":["ציות","",""],"obey":["לציית","",""],"objective":["אוביקטיבי","",""],"obstacle":["מכשול","",""],"offshore":["חו\"ל","",""],"orbit":["לחוג, להסתובב","",""],"orient":["להתמצא","",""],"oriented":["מכוון, מונחה","",""],"outer":["חיצוני","",""],"outline":["תוואי, מתאר, קווים כלליים","",""],"overlooked":["העלים עין","",""],"parallel":["מקביל","",""],"party":["מסיבה","",""],"pattern":["דוגמה","",""],"penned":["כָּתַב","",""],"perceive":["להבחין, לראות","",""],"perform":["לבצע, להציג","",""],"performance":["הופעה","",""],"performer":["מבצע, מציג","",""],"permission":["רשות, היתר","",""],"permit":["להרשות","",""],"persuade":["לשכנע","",""],"persuasion":["שכנוע","",""],"piece":["חתיכה, חלק","",""],"pipe":["צינור","",""],"plausible":["סביר, מתקבל על הדעת","",""],"plot":["עלילה","",""],"poacher":["מסיג גבול, צייד לא מורשה","",""],"practical":["מעשי","",""],"practice":["לתרגל, תרגול","",""],"prescribe":["לרשום מרשם","",""],"prescription":["מרשם","",""],"preserve":["לשמר","",""],"pretext":["אמתלה, תואנה","",""],"prevent":["למנוע","",""],"prevention":["מניעה","",""],"previous":["קודם","",""],"probable":["סביר, מתקבל על הדעת","",""],"probably":["כנראה, קרוב לוודאי","",""],"process":["תהליך","",""],"prohibit":["לאסור, למנוע","",""],"project":["להשליך, להקרין","",""],"promote":["לקדם","",""],"promotion":["קידום","",""],"prompted":["הביא לידי","",""],"proponent":["תומך","",""],"proportion":["שיעור, מידה","",""],"prosperity":["צמיחה, שגשוג","",""],"prosperous":["משגשג, מצליח","",""],"pump":["משאבה, לשאוב","",""],"pursue":["לרדוף","",""],"pursuit":["מרדף","",""],"quantify":["לכמת","",""],"quantity":["כמות","",""],"radically":["באופן קיצוני","",""],"rank":["דרגה","",""],"ray":["קרן, אלומת אור","",""],"razor":["סכין גילוח","",""],"rear":["לטפח, לגדל","",""],"reconcile":["להתפייס","",""],"reform":["שינוי, רפורמה","",""],"reinvigorate":["לרענן, להמריץ מחדש","",""],"relationship":["מערכת יחסים","",""],"religious":["דתי","",""],"remainder":["שארית","",""],"renovate":["לחדש, לשפץ","",""],"respective":["שייך בהתאמה","",""],"respectively":["בהתאמה","",""],"restrict":["להגביל","",""],"restriction":["הגבלה","",""],"retire":["לפרוש","",""],"revoke":["לבטל, לשלול","",""],"reward":["פרס, לתגמל","",""],"ritual":["טקס, פולחן","",""],"rough":["קשה, מחוספס","",""],"rudimentary":["יסודי, בסיסי","",""],"sacred":["קדוש","",""],"sacrifice":["להקריב, קורבן","",""],"sake":["תועלת, עניין","",""],"screen":["לסנן","",""],"seek":["לבקש","",""],"seek, sought":["לחפש, חיפש","",""],"seismic":["( ססמי (קשור לרעידות אדמה","",""],"series":["סדרה","",""],"settle":["להתיישב","",""],"severe":["חמור","",""],"shape":["( צורה, לעצב (צורה","",""],"shift":["להזיז","",""],"shiny":["נוצץ, בוהק","",""],"side effect":["תופעת לוואי","",""],"simplicity":["פשטות","",""],"sketch":["שרטוט, איור, סקיצה","",""],"skyrocket":["להאמיר","",""],"skyscraper":["גורד שחקים","",""],"sorrow":["עצב, צער","",""],"spark":["גיץ, ניצוץ","",""],"spectacular":["מדהים","",""],"spirit":["רוח רפאים, נפש","",""],"spiritual":["רוחני","",""],"spontaneously":["ללא תכנון","",""],"stabilize":["לייצב","",""],"stable":["יציב","",""],"steam":["אד, לאדות","",""],"steamship":["אוניית קיטור","",""],"straightforward":["ישיר","",""],"stream":["לזרום, נחל, זרם","",""],"stricken":["מוכה","",""],"stride":["צעד, לצעוד","",""],"strife":["מאבק, עימות","",""],"strike":["שביתה","",""],"stripes":["פסים","",""],"structure":["מבנה, לבנות","",""],"stumble":["למעוד","",""],"substitute":["תחליף","",""],"sufficient":["מספיק","",""],"superfluous":["מיותר, עודף","",""],"surface":["פני שטח","",""],"suspect":["לחשוד","",""],"suspicious":["( חשוד (משהו","",""],"sympathetic":["אוהד","",""],"team":["צוות","",""],"tendency":["נטייה","",""],"terminate":["לסיים, לחסל","",""],"terrain":["שטח","",""],"terrify":["להפחיד, להבעית","",""],"theme":["נושא","",""],"threat":["איום","",""],"tight":["הדוק, לחוץ, צמוד","",""],"tolerance":["סובלנות","",""],"tolerate":["לסבול","",""],"ultimate":["מוחלט, סופי","",""],"unbearable":["בלתי נסבל","",""],"uncountable":["אינספור","",""],"undergo":["לעבור, להתנסות, לחוות","",""],"unforgettable":["בלתי נשכח","",""],"unsafe":["לא בטוח","",""],"vain":["שחצן","",""],"vary":["משתנה","",""],"venture":["סיכון","",""],"verify":["לוודא, לאמת","",""],"versions":["גרסאות","",""],"vessel":["כלי שיט","",""],"village":["כפר","",""],"virtual":["מדומה, וירטואלי","",""],"virtually":["למעשה, בעצם","",""],"visual":["חזותי","",""],"visualize":["לדמיין","",""],"wealthy":["עשיר","",""],"weigh":["לשקול","",""],"weight":["משקל","",""],"wickedly":["ברשעות","",""],"wisdom":["חכמה, בינה","",""]},"7":{"abstain":["להתנזר, להימנע ממשהו","",""],"accentuate":["להבליט, להדגיש","",""],"accusation":["האשמה","",""],"acknowledge":["להכיר, לדעת","",""],"adequate":["הולם","",""],"advertise":["פרסום","",""],"advertisement":["מודעה, פרסום","",""],"affinity":["משיכה","",""],"agitate":["להסעיר, לזעזע, לעצבן","",""],"agonize":["לענות, לייסר","",""],"agony":["ייסורים","",""],"aisle":["מעבר","",""],"alien":["חייזר","",""],"alienation":["ניכור, הרחקה","",""],"anchor":["עוגן","",""],"annihilate":["להשמיד","",""],"antique":["עתיק, ענתיקה","",""],"apparatus":["מנגנון","",""],"auction":["מכירה פומבית","",""],"augment":["להרחיב","",""],"autograph":["חתימה","",""],"beg":["להתחנן","",""],"burn":["לשרוף, להישרף","",""],"cater":["לספק","",""],"cathedral":["קתדרלה","",""],"cattle":["בקר","",""],"chariot":["מרכבה","",""],"charity":["צדקה","",""],"chase":["לרדוף, מרדף","",""],"cheer":["לעודד","",""],"cheerful":["עליז, שמח","",""],"chemical":["כימיקל, כימי","",""],"circuit":["מעגל חשמלי","",""],"combat":["קרב","",""],"compete":["להתחרות, להתמודד","",""],"competition":["תחרות","",""],"components":["חלקים, מרכיבים","",""],"compulsory":["מהווה חובה","",""],"concise":["תמציתי, תכליתי","",""],"concrete":["קונקרטי, מוחשי","",""],"congregate":["לאסוף קהל, לאסוף","",""],"conspicuous":["בולט","",""],"conspiracy":["קשר, מזימה","",""],"contagious":["מדבק","",""],"contaminate":["לזהם","",""],"correlate":["לתאם, לקשר","",""],"corrupt":["להשחית, מושחת","",""],"council":["מועצה","",""],"counsel":["פרקליט, יועץ","",""],"counterpart":["בעל תפקיד מקביל, עמית, בן- זוג","",""],"couple":["זוג, לצמד","",""],"courage":["אומץ","",""],"court":["בית משפט","",""],"courteous":["אדיב","",""],"courtesy":["נימוס, אדיבות","",""],"craft":["כלי טייס / כלי שייט","",""],"craftsmen":["אומן, בעל מלאכה","",""],"critique":["ביקורת","",""],"cross":["צלב, להצליב","",""],"crossroad":["צומת","",""],"cruel":["אכזרי","",""],"cult":["כת","",""],"dawn":["שחר","",""],"deal":["להתמודד","",""],"dealt":["( עסק ב, חולק (קלפים, ניירת","",""],"debt":["חוב","",""],"decay":["ריקבון","",""],"decipher":["לפענח","",""],"delegate":["להאציל, להסמיך","",""],"delinquent":["עבריין","",""],"depression":["דיכאון","",""],"described":["מתואר","",""],"description":["תיאור","",""],"desirable":["נחשק","",""],"desire":["תשוקה, חשק, לחפוץ","",""],"despair":["להתייאש","",""],"desperate":["נואש","",""],"desperation":["ייאוש","",""],"dimension":["מימד","",""],"disagreement":["חוסר הסכמה","",""],"disappear":["להעלם","",""],"disappoint":["לאכזב","",""],"disapproving":["לא מאשר, לא מסכים, לא מרוצה","",""],"disciples":["תלמידים","",""],"discipline":["להעניש, לחנך, משמעת","",""],"disciplined":["ממושמע","",""],"discontent":["חוסר שביעות רצון","",""],"discourage":["לשכנע שלא לעשות משהו","",""],"discrepancy":["סתירה, פער","",""],"disease":["מחלה","",""],"disinfection":["חיטוי","",""],"dislocate":["לפרוק, לנקוע","",""],"disparage":["לזלזל, להמעיט בערך","",""],"dissent":["להתנגד, חילוקי דעות","",""],"distinction":["הפרדה","",""],"distinctive":["מיוחד","",""],"distinguish":["להבדיל, להבחין","",""],"disturb":["להפריע","",""],"disturbance":["הפרעה","",""],"dominate":["לשלוט","",""],"dozen":["תריסר","",""],"drought":["בצורת","",""],"duel":["דו -קרב","",""],"duplicate":["לשכפל","",""],"durable":["יציב, מתמשך","",""],"dynasty":["שושלת","",""],"eliminate":["לחסל, לפסול","",""],"eloquent":["רהוט","",""],"elude":["לברוח, להתחמק","",""],"embrace":["לחבק, לאמץ לקרבו","",""],"emission":["פליטה","",""],"employ":["להעסיק","",""],"employer":["מעסיק, מעביד","",""],"enclosing":["לסגור, להקיף","",""],"enclosure":["סגירה, כיתור, שטח מגודר","",""],"encounter":["מפגש","",""],"endanger":["לסכן","",""],"endangered":["בסכנת הכחדה","",""],"endurance":["כוח סבל","",""],"endure":["לסבול, להחזיק מעמד","",""],"enforce":["לאכוף, לכפות","",""],"Equator":["קו המשווה","",""],"equip":["לצייד","",""],"equipment":["ציוד","",""],"erupt":["התפרץ","",""],"estate":["נכס","",""],"expense":["הוצאות","",""],"expensive":["יקר","",""],"fabric":["בד","",""],"fabricate":["לבדות","",""],"family":["משפחה","",""],"fatal":["( סופני (פטלי","",""],"fate":["גורל, חרץ גורל","",""],"fellow":["חבר, עמית","",""],"fiction":["בדיון, לא אמיתי","",""],"file":["תיק, קובץ","",""],"fingerprint":["טביעת אצבע","",""],"flame":["להבה","",""],"flatter":["להחמיא","",""],"flattery":["חנופה","",""],"flock":["לנהור, עדר, המון","",""],"flood":["שיטפון","",""],"fragile":["עדין, שביר","",""],"gauge":["למדוד, להעריך, מידה","",""],"generous":["נדיב","",""],"genes":["גנים","",""],"gesture":["מחווה","",""],"given":["נתון","",""],"grade":["שיפוע","",""],"gradually":["בהדרגה","",""],"graduate":["לסיים לימודים","",""],"grand":["גדול, כולל, מרשים","",""],"granddaughter":["נכדה","",""],"grandfather":["סבא","",""],"grandmother":["סבתא","",""],"grandson":["נכד","",""],"guess":["ניחוש, לנחש","",""],"guidance":["הנחיה, הכוונה, הנהגה","",""],"guide":["להדריך","",""],"gunpowder":["אבק שריפה","",""],"hail":["ברד","",""],"hall":["היכל","",""],"harm":["לפגוע, להזיק","",""],"harness":["לרתום","",""],"herb":["עשב","",""],"herd":["עדר, לרעות","",""],"heritage":["מורשת","",""],"husband":["בעל","",""],"illness":["מחלה","",""],"illustrate":["להמחיש, להדגיש","",""],"illustrator":["מאייר","",""],"immersion":["שקיעה","",""],"immoral":["לא מוסרי","",""],"implement":["ליישם, להוציא לפועל","",""],"implementation":["מימוש, יישום, ביצוע","",""],"incident":["תקרית","",""],"incompetence":["חוסר יכולת","",""],"incorporate":["לכלול, לשתף, לאגד","",""],"indefinitely":["ללא הגבלה","",""],"independence":["עצמאות","",""],"independent":["עצמאי","",""],"inevitable":["בלתי נמנע","",""],"infectious":["מדבק","",""],"inferior":["נחות","",""],"infiltrate":["להסתנן","",""],"influence":["השפעה, להשפיע","",""],"insight":["תובנה","",""],"instrument":["כלי","",""],"insurmountable":["שאין להתגבר עליו","",""],"intellectual":["אינטלקטואלי","",""],"interview":["לראיין, ראיון","",""],"introduce":["להציג, לעשות היכרות","",""],"introduction":["הקדמה, מבוא, היכרות","",""],"invade":["לחדור, לפלוש","",""],"invaders":["פולשים","",""],"investigate":["לחקור","",""],"invoke":["לעורר, לזמן","",""],"irregular":["לא רגיל","",""],"irresistible":["שלא ניתן לעמוד בפניו","",""],"justify":["להצדיק","",""],"knife (knives)":["( סכין (סכינים","",""],"label":["לתייג","",""],"labor":["עבודה, עמל, לעמול","",""],"laboratory":["מעבדה","",""],"laborer":["פועל","",""],"layer":["שכבה","",""],"lead, led":["להוביל, הוביל","",""],"leader":["מנהיג","",""],"leadership":["מנהיגות","",""],"lie":["לשקר, שֶקֶר","",""],"lie, lay":["לשכב, שכב","",""],"listen":["להקשיב","",""],"loosely":["באופן רפוי","",""],"loud":["חזק","",""],"loudspeaker":["רמקול","",""],"luxury":["מותרות","",""],"machine":["מכונה","",""],"manufacture":["ייצר","",""],"march":["לצעוד","",""],"margin":["שוליים, מרווח","",""],"martial":["צבאי, קרבי","",""],"master":["אדון, שליט","",""],"masterpiece":["יצירת מופת","",""],"mastery":["מומחיות","",""],"match":["התאמה, להתאים","",""],"melt":["להמיס","",""],"mind":["לשים לב, לשמור","",""],"missile":["טיל","",""],"mobilize":["לנייד, להניע","",""],"mole":["שומה","",""],"myriad":["רב, הרבה","",""],"narrow":["צר","",""],"navigate":["לנווט","",""],"nervous":["עצבני, לחוץ, מתוח","",""],"nobility":["אצולה","",""],"noble":["אציל, אצילי","",""],"notion":["רעיון, מושג, נטיה","",""],"novel":["חדש","",""],"observation":["אבחנה","",""],"observe":["להתבונן, להבחין","",""],"obstinate":["עקשן","",""],"offend":["להעליב","",""],"offender":["פושע, פוגע","",""],"offensive":["מעליב, פוגעני","",""],"oppressive":["מדכא, מעיק","",""],"ornament":["קישוט","",""],"outdated":["מיושן","",""],"outspoken":["מדבר גלויות, ישיר","",""],"outstanding":["יוצא מן הכלל, מצוין","",""],"overtake":["לעקוף, להשיג","",""],"pain":["כאב, להכאיב","",""],"passive":["סביל","",""],"pervasive":["מתפשט, מחלחל","",""],"petition":["עצומה, עתירה, לעתור","",""],"picture":["לדמיין","",""],"play":["מחזה","",""],"playwright":["מחזאי","",""],"policy":["מדיניות","",""],"potent":["חזק, בעל כוח השפעה","",""],"potential":["אפשרי, פוטנציאלי","",""],"prejudice":["דעה קדומה","",""],"prevalent":["נפוץ, שכיח, רווח","",""],"pride":["גאווה","",""],"prison":["כלא","",""],"prophecy":["נבואה","",""],"prosper":["לשגשג","",""],"province":["מחוז, אזור","",""],"provoke":["להתגרות, להסית","",""],"punctuate":["הדגשה","",""],"punctuation":["ניקוד, פיסוק","",""],"pure":["טהור","",""],"purification":["טיהור","",""],"query":["שאלה, חקירה","",""],"rapid":["אֶשֶד, זרם מים מהיר בנהר","",""],"rapidly":["במהירות","",""],"reader":["קורא","",""],"rebuttal":["הפרכה, סתירה","",""],"recognize":["לזהות","",""],"recollection":["זיכרון","",""],"recordings":["הקלטות","",""],"recruit":["לגייס","",""],"recur":["קרה שוב","",""],"recurring":["חוזר, נשנה","",""],"refined":["מעודן, מלוטש","",""],"reflect":["לשקף, להחזיר אור","",""],"reflection":["השתקפות","",""],"refugee":["פליט","",""],"reinforce":["לתגבר, לחזק","",""],"relapse":["הדרדר, הישנות","",""],"relating":["מתייחס","",""],"relations":["יחסים","",""],"remarkable":["ראוי לציון, יוצא דופן","",""],"rival":["יריב","",""],"rivalry":["יריבות","",""],"rodent":["מכרסם","",""],"role":["תפקיד","",""],"rural":["כפרי","",""],"satellite":["לווין","",""],"satisfy":["לרצות, לספק","",""],"scarce":["נדיר","",""],"scholar":["אקדמאי, בעל מלגה, מלומד","",""],"score":["תוצאה","",""],"secular":["חילוני","",""],"senior":["זקן","",""],"sensation":["תחושה","",""],"sensations":["חדשות מרעישות","",""],"set up":["להרכיב, לארגן, לסדר","",""],"sheet":["סדין","",""],"sight":["ראייה, כוונת","",""],"sighting":["תצפית, מראה","",""],"silver":["כסף, כסוף","",""],"sink":["לשקוע","",""],"skin":["עור","",""],"skinned":["פשט עור","",""],"slander":["השמצה, להשמיץ","",""],"slight":["קל, מעט","",""],"speak, spoke":["לדבר, דיבר","",""],"speaker":["דובר","",""],"spell":["איות, לאיית","",""],"spend":["לבזבז, לפזר","",""],"spill":["לשפוך","",""],"spot":["לזהות","",""],"sprang":["נבע","",""],"stadium":["אצטדיון","",""],"stark":["בוטה, מוחלט, גמור","",""],"statue":["פסל","",""],"steel":["פלדה","",""],"stiff":["נוקשה","",""],"storage":["אחסון","",""],"strain":["להתאמץ, למתוח, לנקוע","",""],"strength":["חוזק","",""],"strengthen":["לחזק","",""],"struggle":["מאבק, מאמץ","",""],"stuck":["תקוע","",""],"suffer":["לסבול","",""],"sundown":["שקיעה","",""],"sunlight":["אור יום","",""],"supreme":["עליון","",""],"surprise":["הפתעה","",""],"swing":["לנדנד, נדנדה","",""],"switch":["להחליף","",""],"symptom":["סימפטום","",""],"tempt":["לפתות","",""],"tend":["נוטה","",""],"tender":["רך","",""],"threaten":["לאיים","",""],"tilt":["להטות, שיפוע","",""],"timid":["ביישן","",""],"topic":["נושא","",""],"tower":["מגדל","",""],"toxic":["רעיל","",""],"trace":["סימן, עִקְבָה","",""],"track":["לעקוב","",""],"transform":["לשנות צורה","",""],"translate":["לתרגם","",""],"translator":["מתרגם","",""],"transmit":["לשדר","",""],"transmitter":["משדר","",""],"transplant":["לשתול","",""],"trap":["מלכודת","",""],"triumph":["ניצחון","",""],"tropical":["טרופי","",""],"truth":["אמת","",""],"tube":["צינור","",""],"twist":["סיבוך, סיבוב","",""],"unconscious":["מחוסר הכרה","",""],"unjust":["לא צודק","",""],"vagueness":["עמימות, ערפול","",""],"vanish":["להיעלם","",""],"vegetable":["ירק","",""],"vegetarian":["צמחוני","",""],"vehicle":["כלי רכב","",""],"veracity":["יושר, הגינות","",""],"verdict":["פסק דין, פסיקה","",""],"voyage":["מסע","",""],"want":["לרצות","",""],"wanted":["מבוקש","",""],"warmth":["חום","",""],"wealth":["עושר","",""],"welfare":["סעד","",""],"wheat":["חיטה","",""],"wildlife":["חיות בר","",""],"wind":["רוח","",""],"wing":["כנף","",""],"withstand":["להתמודד, לעמוד ב","",""]},"8":{"abroad":["חו\"ל","",""],"accomplices":["שותף לדבר עבירה","",""],"acquitted":["זוכה מאשמה","",""],"adhere":["לדבוק ב -, לדגול ב","",""],"advocate":["פרקליט","",""],"align":["להסתדר בשורה","",""],"allowance":["דמי כיס, הקצבה","",""],"allusion":["אזכור, רמיזה","",""],"ample":["מספיק, שופע, גדול","",""],"amputation":["קטיעה","",""],"amusement":["שעשוע","",""],"anesthesia":["הרדמה","",""],"annoy":["להציק","",""],"appraise":["להעריך (שווי), לאמוד","",""],"ark":["תיבה","",""],"arrogant":["יהיר, שחצן","",""],"artifact":["חפץ, פריט אומנות","",""],"atrocity":["זוועה","",""],"attire":["לבוש","",""],"baffled":["מבולבל","",""],"baggage":["מטען, מזוודה","",""],"bandage":["תחבושת","",""],"barrier":["מחסום","",""],"bashful":["ביישן","",""],"bent":["כופף","",""],"blend":["לערבב","",""],"blur":["טשטוש, לטשטש","",""],"boil":["להרתיח","",""],"bolster":["לתמוך","",""],"boot":["מגף","",""],"bore":["( לקדוח (חור","",""],"bury":["לקבור","",""],"cabin":["בקתה","",""],"ceremony":["טקס, מסכת","",""],"coal":["פחם","",""],"command":["פקודה, לפקוד","",""],"commute":["להחליף, להמיר","",""],"composed":["הלחין","",""],"condense":["לדחוס","",""],"condone":["לסלוח, למחול","",""],"congenial":["נעים, ידידותי","",""],"congenital":["מולד","",""],"consolidate":["לאחד, לגבש","",""],"container":["מיכל, קונטיינר","",""],"contest":["למחות","",""],"convict":["אסיר","",""],"cope":["להתמודד","",""],"cord":["מיתר","",""],"cornerstone":["אבן פינה","",""],"crash":["להתנגש, התנגשות","",""],"credibility":["אמינות, מהימנות","",""],"crown":["כתר, להכתיר","",""],"cultivate":["לעבד, לטפח","",""],"curiosity":["סקרנות","",""],"curious":["סקרן","",""],"curve":["עקומה, פניה","",""],"damp":["לח","",""],"dampen":["לדכא","",""],"dare":["אתגר","",""],"daydream":["לחלום בהקיץ","",""],"deaf":["חרש","",""],"defer":["לעכב, לדחות","",""],"deflate":["להוציא אוויר מ","",""],"deform":["לעוות","",""],"deformity":["מום, עיוות","",""],"delicate":["עדין","",""],"demean":["להנמיך, להשפיל","",""],"department":["מחלקה","",""],"department-store":["חנות כלבו","",""],"deposit":["להפקיד, פיקדון","",""],"depreciate":["להפחית","",""],"despise":["לתעב","",""],"dessert":["קינוח","",""],"devoid":["חסר, נטול","",""],"disdain":["זלזול, בוז","",""],"disgrace":["בושה","",""],"disguise":["תחפושת","",""],"disloyal":["לא נאמן","",""],"disparagement":["זלזול","",""],"dispatch":["לשגר","",""],"displacement":["עקירה","",""],"disseminate":["להפיץ","",""],"docile":["צייתן, כנוע, נח","",""],"domestic":["ביתי","",""],"donate":["לתרום","",""],"donor":["תורם","",""],"draw":["לצייר","",""],"draw (drew)":["לשלוף, שלף","",""],"drawback":["חסרון, עיכוב","",""],"drift":["זרם, סחף","",""],"eager":["נחוש, נלהב","",""],"embryo":["עוּבָּר","",""],"engage":["להעסיק, ליצור מגע","",""],"engagement":["אירוסין","",""],"enlist":["להתגייס","",""],"enrage":["להרגיז, להכעיס","",""],"entertain":["לשעשע, לבדר","",""],"entertainment":["בידור","",""],"entitled":["זכאי","",""],"entrance":["כניסה","",""],"envision":["לחזות, לצפות","",""],"esteemed":["מכובד","",""],"exaggerate":["להגזים","",""],"examination":["בחינה, בדיקה","",""],"examine":["לבחון","",""],"excitement":["התרגשות","",""],"exert":["להתאמץ","",""],"exhaust":["פליטה, צינור מפלט","",""],"exist":["קיים","",""],"existence":["קיום","",""],"expedite":["לזרז","",""],"expend":["לגמור, לבזבז, לפזר","",""],"expendable":["שניתן לוותר עליו","",""],"eyesight":["ראייה, כוונת","",""],"factory":["מפעל, בית חרושת","",""],"familiar":["מוכר","",""],"familiarize":["להתוודע","",""],"fascinate":["לרתק","",""],"fertile":["פורה","",""],"fetus":["( עובר (ברחם","",""],"fiber":["סיב","",""],"figurative":["סמלי","",""],"finalize":["לסכם, לגבש","",""],"firm":["( חברה (פירמה","",""],"flagrant":["בוטה","",""],"flexible":["גמיש","",""],"fluctuation":["חוסר יציבות","",""],"fluency":["שטף","",""],"fluent":["שוטף","",""],"fluid":["נוזל","",""],"footprints":["עקבות, טביעות רגל","",""],"foresee":["לצפות מראש","",""],"fort":["מצודה, מבצר","",""],"fortify":["לחזק, לבצר","",""],"fragrance":["ניחוח","",""],"freeze, froze":["להקפיא, הקפיא","",""],"fruit":["פרי","",""],"fulfill":["להגשים","",""],"garment":["בגד, לבוש","",""],"gasoline":["בנזין","",""],"genre":["ז'אנר, סוגה","",""],"genus":["סוג, מין","",""],"giant":["ענק","",""],"goblet":["גביע","",""],"greet":["לברך, לקבל פנים","",""],"grief":["יגון, צער","",""],"grievance":["טרוניה, התמרמרות","",""],"growled":["נהם","",""],"guarantee":["להבטיח, ערבות","",""],"halve":["לחצות","",""],"harass":["להציק","",""],"hasten":["למהר, להחפז","",""],"hasty":["מהיר, בהול","",""],"hatch":["פתח, צוהר","",""],"haul":["לגרור","",""],"heed":["לשים לב","",""],"hegemony":["הגמוניה","",""],"height":["גובה","",""],"heresy":["כפירה","",""],"hibernate":["לישון שנת חורף","",""],"hid from":["התחבא מ","",""],"hidden":["חבוי, נסתר","",""],"highway":["כביש ראשי","",""],"hinder":["לעכב","",""],"hint":["רמז","",""],"historian":["היסטוריון","",""],"hive":["כוורת","",""],"horrific":["אָיוֹם","",""],"horror":["אימה","",""],"hospitality":["הכנסת אורחים","",""],"host":["מארח","",""],"hostility":["עוינות","",""],"hypocrisy":["צביעות","",""],"idolize":["להעריץ","",""],"ill":["חולה","",""],"illuminate":["להאיר","",""],"illusion":["אשליה","",""],"imaginative":["דמיוני","",""],"imitate":["לחקות","",""],"implore":["להתחנן, להפציר","",""],"imply":["לרמוז","",""],"imprisonment":["מאסר, כליאה","",""],"inadvertently":["בלי משים, בלי כוונה","",""],"incline":["להתאים","",""],"indebted":["חייב ל -, אסיר תודה","",""],"induce":["לגרום, לייצר","",""],"infancy":["ינקות","",""],"inherit":["לרשת","",""],"inhibit":["לרסן","",""],"inject":["להזריק","",""],"injury":["פציעה","",""],"insanity":["אי שפיות","",""],"inspect":["לבחון, לבדוק","",""],"insult":["להעליב","",""],"integrate":["לשלב","",""],"intelligence":["אינטליגנציה","",""],"interface":["ממשק","",""],"interjection":["הערה, הפרעה לשיחה","",""],"keystone":["אבן מפתח","",""],"lackluster":["העדר ברק, העדר כוח","",""],"leisure":["פנאי","",""],"leisurely":["נינוח, רגוע","",""],"lucrative":["ריווחי","",""],"luggage":["מזוודות","",""],"luminous":["זוהר, בוהק","",""],"lurking":["אורב, מתגנב","",""],"magnitude":["גודל, חשיבות","",""],"malformation":["עיוות, פגם","",""],"manner":["התנהגות, אופן","",""],"manners":["נימוס","",""],"marriage":["נישואין","",""],"masculine":["גברי","",""],"merit":["ערך, הישג","",""],"metal":["מתכת, מתכתי","",""],"meticulous":["קפדני","",""],"migrate":["להגר","",""],"mimic":["לחקות","",""],"minister":["( שר (בממשלה","",""],"monarch":["מלך","",""],"morose":["קודר, עגמומי","",""],"muscle":["שריר","",""],"mutation":["מוטציה","",""],"mystery":["תעלומה","",""],"narcotic":["סם","",""],"neighbor":["שכן","",""],"neighborhood":["שכונה","",""],"noise":["רעש","",""],"nuisance":["מטרד","",""],"nurse":["אחות","",""],"nursery":["חדר ילדים","",""],"nurture":["לטפח, להזין, לחנך","",""],"obligation":["התחייבות","",""],"oblige":["לחייב, להכריח","",""],"ocean":["אוקיינוס","",""],"offset":["לקזז","",""],"overly":["יותר מידי","",""],"oversee":["לפקח","",""],"overwhelm":["מהמם","",""],"package":["חפיסה, חבילה","",""],"painter":["צייר","",""],"painting":["ציור","",""],"passion":["תשוקה","",""],"path":["דרך, נתיב","",""],"patience":["סבלנות","",""],"patiently":["בסבלנות","",""],"patients":["מטופלים","",""],"peddler":["רוכל, סוחר","",""],"penalty":["קנס","",""],"people":["אנשים","",""],"perpetuate":["להנציח","",""],"pest":["( מטרד, מזיק (חרקים","",""],"petroleum":["נפט","",""],"plague":["מגפה","",""],"plentiful":["מלא, שופע","",""],"poet":["משורר","",""],"polar":["קוטבי, הפוך לחלוטין","",""],"pole":["קוטב","",""],"poor":["עני, מסכן","",""],"poorly":["בצורה גרועה","",""],"portrait":["דיוקן","",""],"posterity":["הדורות הבאים","",""],"pot":["סיר, קדרה","",""],"potato":["תפוח אדמה","",""],"potter":["קדר","",""],"praise":["לשבח","",""],"prepare":["התכונן","",""],"preside":["לנהל","",""],"prestigious":["יוקרתי","",""],"pretend":["להעמיד פנים","",""],"principal":["מנהל בית ספר","",""],"principle":["עיקרי","",""],"probation":["תקופת מבחן","",""],"proliferate":["התפשט במהירות","",""],"prolific":["פורה, שופע","",""],"prolong":["מתמשך","",""],"prominent":["בולט, חשוב","",""],"prone":["נוטה","",""],"proof":["הוכחה, ראיה","",""],"propel":["להניע, לדחוף","",""],"proposal":["הצעה","",""],"propose":["להציע, להציע נישואין","",""],"proposition":["הצעה","",""],"prospective":["צפוי, עתידי","",""],"punish":["להעניש","",""],"readily":["ללא קושי","",""],"readiness":["מוכנות","",""],"realize":["הבין","",""],"rearing":["גידול, טיפוח","",""],"reassurance":["הבטחה, הרגעה","",""],"reborn":["נולד מחדש","",""],"recall":["להחזיר, להשיב צלצול","",""],"recruitment":["גיוס","",""],"reliable":["אמין, שניתן לסמוך עליו","",""],"relic":["שארית, שריד","",""],"relieve":["להקהל","",""],"remedy":["תרופה","",""],"reorganize":["לארגן מחדש","",""],"repelled":["דחה, הגעיל","",""],"replica":["העתק מדויק","",""],"represent":["לייצג, מייצג","",""],"repressive":["מדכא","",""],"reproduce":["להתרבות, לשכפל","",""],"reputation":["שם, מוניטין","",""],"resent":["להתנגד, להתרעם","",""],"reservation":["שמורה","",""],"reserve":["עתודה, מילואים","",""],"reservoir":["מאגר","",""],"resigned":["התפטר","",""],"respect":["כבוד, לכבד","",""],"respectfully":["בכבוד","",""],"respond":["להגיב, תגובה, תשובה","",""],"responsibility":["אחריות","",""],"responsible":["אחראי","",""],"retirement":["פרישה","",""],"retreat":["לסגת, נסיגה","",""],"revise":["לתקן, לשפר","",""],"revision":["בדיקה מחדש לצורך שיפור","",""],"ridicule":["ללעוג","",""],"ridiculous":["מגוחך","",""],"rim":["שפה","",""],"rope":["חבל","",""],"rub":["לשפשף","",""],"rumor":["שמועה","",""],"salary":["שכר","",""],"sanction":["קנס, עונש, עידוד","",""],"saw":["מסור","",""],"saw, see":["ראה, לראות","",""],"seeds":["זרעים","",""],"segment":["קטע, מקטע","",""],"self-confidence":["בטחון -עצמי","",""],"self-indulgence":["סיפוק -עצמי","",""],"sequel":["המשך","",""],"sequence":["רצף","",""],"shatter":["לנפץ, להרוס, לקעקע","",""],"shell":["פגז","",""],"shelter":["מקלט","",""],"shield":["מגן, להגן","",""],"signature":["חתימה","",""],"silent":["דומם, שקט","",""],"silently":["בשקט","",""],"slant":["אלכסון, נטייה","",""],"slate":["רעף, לוח","",""],"slaughter":["לטבוח, לשחוט, טֶבַח","",""],"slave":["עבד","",""],"slavery":["עבדות","",""],"slender":["רזה","",""],"slope":["שיפוע, מדרון","",""],"snicker":["גיחוך","",""],"soldier":["חייל","",""],"solitary":["מבודד","",""],"solve":["לפתור","",""],"soul":["נשמה","",""],"sound":["בריא","",""],"special":["מיוחד","",""],"spike":["יתד","",""],"splendor":["פאר","",""],"spotlight":["זרקור","",""],"stage":["במה, לביים","",""],"starve":["לרעוב","",""],"store":["לאחסן","",""],"stress":["מתח, לחץ, מצוקה","",""],"strict":["נוקשה","",""],"stubborn":["עקשן","",""],"subsequent":["עוקב","",""],"supplement":["תוסף","",""],"supply":["אספקה","",""],"susceptible":["רגישות","",""],"suspend":["להשעות","",""],"suspense":["השהיה, מתח","",""],"tact":["טקט","",""],"tension":["מתח","",""],"testify":["להעיד","",""],"texture":["מרקם, טקסטורה","",""],"tie":["לקשור, קשר","",""],"timber":["עץ","",""],"tomb":["קבר","",""],"trait":["תכונה","",""],"tranquilize":["להרגיע, להרדים","",""],"transaction":["עסקה","",""],"transcend":["להתעלות","",""],"transition":["מעבר, שינוי","",""],"transparent":["שקוף","",""],"transport":["להוביל","",""],"transportation":["תחבורה","",""],"unconventional":["לא שיגרתי","",""],"underestimate":["הערכה נמוכה, לזלזל","",""],"vacant":["פנוי, ריק","",""],"veteran":["ותיק","",""],"virtue":["מעלה","",""],"vital":["חיוני","",""],"vivid":["חד, בהיר, ססגוני, שופע","",""],"vulnerable":["פגיעות","",""],"warn":["להזהיר","",""],"warning":["אזהרה","",""],"weaken":["להחליש","",""],"withdraw":["לסגת, לפרוש","",""],"witness":["עד, להעיד","",""],"worry":["דאגה, לדאוג","",""],"zoo":["גן חיות","",""]},"9":{"abhor":["לשנוא, לתעב","",""],"adolescence":["גיל ההתבגרות","",""],"agency":["סוכנות","",""],"apathetic":["אדיש","",""],"apathy":["אפאתיה, אדישות","",""],"appease":["לפייס","",""],"appetite":["תיאבון, רצון עז","",""],"applaud":["מחא כפיים, הריע","",""],"arable":["מתאים לעיבוד","",""],"attorney":["עורך -דין","",""],"aura":["הילה","",""],"awe":["יראת כבוד","",""],"awkward":["מוזר, מביך","",""],"bail":["ערבות, לשחרר בערבות","",""],"bald":["קרח","",""],"bargain":["להתמקח","",""],"barn":["אסם","",""],"basin":["אגן, כיור","",""],"beard":["זקן","",""],"beast":["חיה, מפלצת","",""],"beat":["מקצב","",""],"behind":["ישבן","",""],"biblical":["תנ\"כי","",""],"bland":["תפל","",""],"blink":["למצמץ","",""],"bond":["קשר","",""],"breed":["מין, גזע","",""],"burglar":["פורץ","",""],"butcher":["לשחוט","",""],"cavity":["חור","",""],"celebrate":["לחגוג","",""],"charm":["קסם","",""],"cheat":["לרמות, לבגוד","",""],"clash":["התנגשות","",""],"cliff":["צוק","",""],"cloak":["מסווה, להסוות","",""],"coma":["תרדמת","",""],"comic":["( קומי (מהמילה קומדיה","",""],"cosmopolitan":["אוניברסלי","",""],"cough":["שיעול, להשתעל","",""],"course":["מסלול","",""],"cousin":["בן -דוד","",""],"cripple":["להטיל מום","",""],"croak":["קרקור","",""],"crop":["יבול","",""],"crowd":["קהל","",""],"curtain":["וילון","",""],"dagger":["פגיון","",""],"dairy":["מחלבה","",""],"dandy":["גנדרני","",""],"decorate":["לקשט","",""],"decorative":["קישוטי, דקורטיבי","",""],"deer":["איל","",""],"demented":["משוגע, מטורף","",""],"densely":["בצפיפות","",""],"density":["צפיפות","",""],"depict":["לתאר, להציג, לשרטט","",""],"derision":["לעג","",""],"detail":["פרט, לפרט","",""],"detrimental":["מזיק","",""],"devastated":["הרוס, מפורק","",""],"diet":["דיאטה, תזונה","",""],"dim":["לעמעמם","",""],"disarmament":["פירוק מנשק","",""],"discord":["סכסוך, מחלוקת, צרימה","",""],"disgust":["גועל, להגעיל","",""],"dissect":["לנתח, לבתר","",""],"dissection":["חיתוך, ביתור","",""],"disuse":["חוסר שימוש","",""],"dose":["מנה, מינון","",""],"double standard":["מוסר כפול","",""],"draft":["רוח פרצים","",""],"drag":["לגרור","",""],"dread":["פחד, לפחד","",""],"drench":["להרטיב, להספיג","",""],"drip":["לטפטף","",""],"dull":["משעמם","",""],"dump":["לשפוך","",""],"dwell":["להתגורר","",""],"dwelling":["משכן, בית","",""],"dye":["צבע, לצבוע","",""],"East":["מזרח","",""],"eccentric":["מוזר, אקסצנטרי","",""],"ecological":["אקולוגי","",""],"elastic":["גמיש, אלסטי, גומיה","",""],"elderly":["זקן","",""],"embalm":["לחנוט, לשמר","",""],"embarrass":["להביך","",""],"embitter":["גורם התמרמרות","",""],"emit":["לפלוט, להוציא","",""],"empathy":["הזדהות, אמפתיה","",""],"emphasize":["להדגיש","",""],"enchant":["לכשף, להקסים","",""],"encroach":["להסיג גבול, לפלוש","",""],"engine":["מנוע","",""],"engineer":["מהנדס, להנדס","",""],"enrich":["להעשיר","",""],"enroll":["להירשם","",""],"ensue":["נבע","",""],"enthusiasm":["התלהבות","",""],"envious":["קנאי","",""],"envy":["קנאה, לקנא","",""],"epitomize":["לייצג, לאפיין","",""],"erosion":["סחף, כרסום","",""],"erroneous":["שגוי","",""],"evocative":["מעורר, מעלה, מזכיר","",""],"exhale":["לנשוף","",""],"exhibit":["להציג, מוצג","",""],"exhibition":["תערוכה","",""],"exile":["להגלות, לגרש","",""],"expand":["להרחיב","",""],"expansion":["התפתחות","",""],"expatriate":["להגלות, לגרש","",""],"expel":["להשעות, להרחיק","",""],"explode":["להתפוצץ","",""],"extortion":["סחיטה","",""],"extraordinary":["בלתי רגיל","",""],"extrapolate":["לאמוד על סמך מידע קיים","",""],"faint":["להתעלף","",""],"famine":["רעב קשה","",""],"famous":["מפורסם","",""],"fatigue":["עייפות, תשישות","",""],"fault":["פגם, תקלה","",""],"faulty":["לקוי, לא תקין","",""],"fever":["( חום (של מחלה","",""],"flavor":["טעם","",""],"flee, fled":["להימלט, נמלט","",""],"flip":["לזרוק, להעיף","",""],"flow":["זרם","",""],"focus":["להתמקד, מיקוד","",""],"forgettable":["שאפשר לשכוח אותו","",""],"foster":["אומן, מאומץ","",""],"fraction":["שבר","",""],"fracture":["שבר","",""],"fraud":["מרמה, הונאה","",""],"frequency":["תדר, תדירות","",""],"frequent":["תדיר, שכיח","",""],"frightening":["מפחיד","",""],"fringes":["שוליים","",""],"frugal":["חסכני","",""],"frustration":["תסכול","",""],"fuel":["דלק","",""],"fume":["אדים, עשן","",""],"fungus":["פטרת","",""],"fur":["פרווה","",""],"fury":["זעם","",""],"gamble":["הימר","",""],"gene":["( גן (תורשתי","",""],"genesis":["היווצרות, התהוות","",""],"genetic":["תורשתי, גנטי","",""],"genial":["ידידותי","",""],"glance":["מבט חטוף","",""],"glitch":["תקלה, הפרעה","",""],"glorify":["להאדיר","",""],"grace":["חסד, חינניות","",""],"gracious":["חינני, אדיב","",""],"grain":["תבואה","",""],"hike":["הליכה, טיול","",""],"hobby":["תחביב","",""],"humiliate":["להשפיל","",""],"humility":["ענוה","",""],"ice cream":["גלידה","",""],"iceberg":["קרחון","",""],"icicle":["נטיף קרח","",""],"indigenous":["ילידים, מולד","",""],"inflammation":["דלקת","",""],"inflate":["לנפח","",""],"infraction":["עבירה","",""],"ingest":["להכניס משהו לגוף דרך הפה","",""],"ingredients":["מרכיבים","",""],"injure":["לפצוע","",""],"insect":["חרק","",""],"installation":["התקנה","",""],"instant":["מיידי","",""],"instill":["להחדיר, להשריש","",""],"insulate":["לבודד","",""],"insurrection":["התקוממות","",""],"intact":["ללא פגע","",""],"intermediary":["מתווך, אמצעי","",""],"interminable":["נצחי","",""],"intimidate":["להפחיד","",""],"intrusive":["פולשני","",""],"invariably":["ללא שינוי","",""],"ironic":["אירוני","",""],"jagged":["משונן","",""],"journey":["מסע","",""],"joyous":["שמח, עליז","",""],"keep":["חלק מהמצודה","",""],"kick":["לבעוט, בעיטה","",""],"knees":["ברכיים","",""],"knot":["קשר","",""],"lamentable":["מצער, מעציב","",""],"laugh":["לצחוק","",""],"lend":["להלוות, להשאיל","",""],"liberal":["ליברלי, מתירני","",""],"library":["ספריה","",""],"limb":["גף, איבר","",""],"limber":["גמיש","",""],"lineage":["ייחוס, שושלת","",""],"linger":["להתעכב, להשתהות","",""],"link":["קישור, לקשר, חוליה","",""],"lodge":["להתאכסן, אכסנייה","",""],"log":["יומן, לתעד ביומן","",""],"lone":["בודד, יחיד","",""],"loneliness":["בדידות","",""],"lumber":["גזע עץ","",""],"maximize":["למקסם","",""],"maze":["מבוך","",""],"mechanize":["למכן, להתקין מכונות","",""],"media":["מדיה, תקשורת","",""],"Mediterranean":["ים תיכוני","",""],"memorial":["מצבה, תזכיר","",""],"memorize":["לשנן, לזכור בעל -פה","",""],"memory":["זיכרון, לזכר","",""],"mental":["נפשי","",""],"mention":["להזכיר, לאזכר","",""],"mentor":["מדריך רוחני","",""],"mercy":["רחמים","",""],"midair":["באוויר","",""],"minimize":["למזער","",""],"mirror":["מראה","",""],"misbehave":["להתנהג בצורה לא הולמת","",""],"mischief":["נזק, מעשה קונדס","",""],"miss":["לפספס","",""],"misty":["מעורפל","",""],"mix":["לערבב, ערבוב","",""],"monitor":["להשגיח, מוניטור","",""],"monument":["אנדרטה","",""],"motif":["מוטיב","",""],"mountain":["הר","",""],"mountainside":["מדרון","",""],"mountaintop":["פסגת הר","",""],"mourning":["אבל, מתאבל","",""],"narration":["קריינות","",""],"naval":["ימי","",""],"neck":["צוואר","",""],"nest":["קן, לקונן","",""],"norm":["נורמה, תקן","",""],"North":["צפון","",""],"nose":["אף, חרטום","",""],"nowadays":["כיום","",""],"numb":["רדום, חסר תחושה","",""],"obsession":["אובססיה, דיבוק","",""],"odor":["ריח, ניחוח","",""],"old-fashioned":["מיושן","",""],"outweigh":["עולה על, שוקל יותר מ","",""],"owe":["להיות חייב","",""],"oxygen":["חמצן","",""],"palm":["דקל","",""],"pardon":["לחון, חנינה","",""],"peek":["להציץ","",""],"petty":["קטנוני","",""],"phobia":["פוביה, פחד כרוני","",""],"pivot":["ציר, לסובב על ציר","",""],"plate":["צלחת, לוח","",""],"plead":["לעתור, להתחנן","",""],"pleasure":["תענוג, לענג","",""],"pledge":["להתחייב","",""],"plight":["צרה, סכנה","",""],"plunge":["טבילה","",""],"poignant":["חריף, נוקב","",""],"poisonous":["רעיל","",""],"polish":["להבריק, לצחצח","",""],"polite":["מנומס","",""],"portray":["לתאר, לצייר","",""],"precious":["יקר","",""],"predominantly":["באופן ניכר","",""],"prey":["טרף, לטרוף","",""],"prize":["פרס","",""],"probe":["לחטט, לברר, לגשש","",""],"proverb":["פתגם, אמרה","",""],"pupil":["תלמיד","",""],"purchase":["לקנות, לרכוש","",""],"puzzle":["חידה, פאזל","",""],"puzzled":["מבולבל","",""],"quake":["רעד","",""],"quench":["לספק, להרוות","",""],"rage":["זעם","",""],"raid":["פשיטה","",""],"reap":["לקצור","",""],"rebel":["מורד","",""],"rebellion":["מרד","",""],"rebellious":["סורר, מרדני","",""],"recipe":["מתכון","",""],"recipient":["נמען","",""],"reciprocal":["( מספר הופכי (במתמטיקה","",""],"reciprocate":["הדדי","",""],"recreation":["בילוי","",""],"refund":["החזר","",""],"regret":["להתחרט, חרטה","",""],"regulate":["לווסת","",""],"rehabilitation":["שיקום","",""],"relegated":["הורד בדרגה","",""],"resort":["לנקוט באמצעים","",""],"revitalize":["להחיות","",""],"revived":["קם לתחייה, התחדש","",""],"revolt":["מרד","",""],"revolution":["מהפכה","",""],"rhythm":["קֶצֶב","",""],"root":["שורש","",""],"rotary":["נע על ציר סיבובי","",""],"rubber":["גומי","",""],"sailor":["ימאי","",""],"salvation":["ישועה, גאולה","",""],"saturated":["רווי","",""],"scale":["מאזניים","",""],"scales":["( קשקשים (של דג","",""],"scan":["סריקה, לסרוק","",""],"scorn":["לבוז, לזלזל, מנודה","",""],"scrutinize":["בדק, בחן","",""],"sculpture":["פסל","",""],"sedative":["סם הרגעה, משכך","",""],"segregation":["הפרדה","",""],"seizure":["התקף","",""],"separately":["בנפרד","",""],"separation":["הפרדה","",""],"shrink":["לכווץ ,כיווץ","",""],"shroud":["תכריך, עטיפה","",""],"sin":["חטא","",""],"sincerity":["כנות","",""],"situation":["מצב, סיטואציה","",""],"slaughterhouse":["בית מטבחיים","",""],"sober":["פיכח","",""],"solely":["בלבד, רק","",""],"sperm":["זרע","",""],"spewing":["להזרים","",""],"spice":["תבלין, לתבל","",""],"spicy":["פיקנטי","",""],"spray":["לרסס, לפזר","",""],"stain":["כתם","",""],"stamp":["בול, חותמת","",""],"step":["צעד, לצעוד","",""],"storm":["סערה","",""],"straighten":["ליישר","",""],"study":["חדר עבודה","",""],"stunned":["נדהם, היה המום","",""],"substance":["חומר, תוכן","",""],"suggest":["להציע","",""],"suicide":["התאבדות","",""],"summits":["פסגות","",""],"surgery":["ניתוח","",""],"surpass":["להצטיין, לעלות על","",""],"surrender":["להיכנע","",""],"surveillance":["מעקב","",""],"survival":["הישרדות","",""],"swallow":["לבלוע","",""],"sweep":["לטאטא","",""],"symmetry":["סימטריה, התאמה","",""],"taint":["להכתים, להכפיש","",""],"tainted":["מוכתם, מזוהם","",""],"talent":["כשרון","",""],"tame":["לאלף, לבית","",""],"tentative":["ניסיוני, טנטטיבי","",""],"thief":["גנב","",""],"thriller":["מותחן","",""],"tone":["טון","",""],"transcript":["תמליל, פרוטוקול","",""],"trip":["טיול","",""],"unofficial":["בלתי רשמי","",""],"unorganized":["לא מאורגן","",""],"unpardonable":["בלתי נסלח","",""],"unrealistic":["לא מציאותי","",""],"unrest":["חוסר שקט","",""],"unwilling":["לא מוכן, ממאן","",""],"upheaval":["מהפך","",""],"uproar":["רעש, מהומה","",""],"urine":["שתן","",""],"utilize":["השתמש","",""],"utter":["לבטא, להגות","",""],"valley":["עמק","",""],"valve":["שסתום","",""],"verbal":["ורבלי, מילולי","",""],"via":["דרך","",""],"victim":["קורבן","",""],"vocabulary":["אוצר מילים","",""],"vocation":["מקצוע","",""],"wagon":["עגלה","",""],"wander":["להסתובב, לשוטט","",""],"West":["מערב","",""],"wine":["יין","",""],"wonder":["לתהות, להטיל ספק","",""],"wonderful":["נפלא","",""],"wood":["עץ","",""],"woods":["יער","",""],"wound":["מתוח, נמתח","",""],"wrap":["לעטוף, מעטפת","",""],"wrought":["מעוצב, מחושל","",""],"young":["צעיר","",""]},"10":{"abacus":["חשבונייה","",""],"academic":["אקדמי","",""],"actress":["( שחקנית (בהצגה או סרט","",""],"adorn":["לקשט","",""],"agenda":["סדר יום","",""],"air conditioner":["מזגן","",""],"algae":["אצות","",""],"antler":["קרן","",""],"automobile":["כלי רכב, אוטו","",""],"bass":["( בס (במוזיקה","",""],"bead":["חרוז","",""],"beak":["מקור","",""],"bee":["דבורה","",""],"bell":["פעמון","",""],"berry":["גרגרי יער","",""],"blade":["להב","",""],"blame":["להאשים","",""],"blanket":["שמיכה","",""],"bleak":["עגום","",""],"blew":["נשב (רוח), ניפח, פוצץ","",""],"brick":["לבנה","",""],"bully":["בריון","",""],"butterfly":["פרפר","",""],"cadaver":["גופה","",""],"camel":["גמל","",""],"cancel":["לבטל","",""],"candy":["ממתק","",""],"canvass":["לבדוק, לסקור","",""],"carpet":["שטיח","",""],"cash":["לפדות","",""],"cashier":["קופאי","",""],"casino":["קזינו","",""],"caterpillar":["זחל","",""],"cave":["מערה","",""],"caviar":["קוויאר","",""],"cereal":["דגני בוקר","",""],"cigarette":["סיגריה","",""],"citrus":["פרי הדר","",""],"clay":["חימר","",""],"cloud":["ענן","",""],"club":["מועדון","",""],"cockroach":["מקק, ג'וק","",""],"coffin":["ארון מתים","",""],"cologne":["( קולון, בושם (של גבר","",""],"compost":["זבל אורגני","",""],"conductor":["( מנצח (תזמורת","",""],"conquistador":["כובש","",""],"consonant":["( עיצור (לשון","",""],"coop":["לול","",""],"copper":["נחושת","",""],"cotton":["כותנה","",""],"cougar":["פומה, סוג של טורף","",""],"coupon":["קופון","",""],"cucumber":["מלפפון","",""],"culminate":["הגיע לשיא","",""],"czar":["( צאר (שליט רוסי","",""],"dart":["חץ","",""],"date":["יציאה, פגישה, דייט","",""],"Dead Sea":["ים המלח","",""],"denominator":["( מכנה (של שבר","",""],"dental":["שקשור בשיניים","",""],"dentist":["רופא שיניים","",""],"diary":["יומן","",""],"dictator":["עריץ, דיקטטור","",""],"dilemma":["דילמה, בעיה","",""],"diurnal":["יומי","",""],"divorce":["גירושין","",""],"doorstep":["מפתן הדלת","",""],"dovecote":["שובך","",""],"dust":["אבק, לאבק","",""],"Dutch":["הולנדי","",""],"dwarf":["לגמד, גמד","",""],"dwindle":["הידלדל, התמעט","",""],"eagle":["נשר","",""],"echo":["הד","",""],"edible":["אכיל","",""],"eel":["צלופח","",""],"elephant":["פיל","",""],"envelope":["מעטפה","",""],"exotic":["אקזוטי, מארץ זרה","",""],"explosive":["חומר נפץ","",""],"fairy":["פיה","",""],"fairytale":["אגדה","",""],"fan":["מעריץ, אוהד","",""],"fancy":["מחבב","",""],"fashion":["לעצב","",""],"filmmaker":["יוצר סרטים","",""],"filter":["פילטר, מסנן","",""],"fisherman":["דייג","",""],"fishing":["דיג","",""],"flimsy":["עדין, שביר","",""],"folk":["עממי","",""],"folklore":["פולקלור","",""],"fool":["טיפש, לשטות במישהו","",""],"footage":["קטע צילום","",""],"forest":["יער","",""],"forgive":["לסלוח","",""],"fork":["מזלג","",""],"formula":["נוסחה, פורמולה","",""],"formulate":["לנסח","",""],"fraternal":["אחוותי, של אחים","",""],"frog":["צפרדע","",""],"furnish":["לרהט","",""],"garbage":["זבל","",""],"garden":["גן","",""],"garlic":["שום","",""],"gate":["שער","",""],"gift":["מתנה","",""],"glacier":["קרחון","",""],"gland":["בלוטה","",""],"glass":["זכוכית","",""],"glaze":["זיגוג","",""],"glove":["כפפה","",""],"golden":["מוזהב","",""],"grammatical":["דקדוקי","",""],"grapes":["ענבים","",""],"grit":["גרגרים, לכלוך","",""],"grocery":["מכולת","",""],"groom":["חתן","",""],"guillotine":["גיליוטינה","",""],"Gulf War":["מלחמת המפרץ","",""],"gym":["אולם ספורט","",""],"gymnasium":["אולם ספורט","",""],"handicap":["נכה","",""],"harmony":["הרמוניה","",""],"heart":["לב","",""],"heartbeat":["דופק, פעימות לב","",""],"heroine":["גיבורה","",""],"hilarious":["מצחיק","",""],"hill":["גבעה","",""],"horn":["צופר","",""],"housemaid":["עוזרת בית, מנקה","",""],"howl":["יללה, לילל","",""],"index":["אינדקס, תוכן עניינים","",""],"inexpensive":["לא יקר, זול","",""],"inn":["פונדק","",""],"intense":["עז, אינטנסיבי","",""],"intoxicate":["להלהיב","",""],"intuition":["אינטואיציה","",""],"invertebrate":["חסר -חוליות","",""],"ivory":["שנהב","",""],"janitor":["שרת","",""],"jog":["ריצה, ג'וגינג, לרוץ","",""],"joke":["בדיחה","",""],"jug":["כד, קנקן","",""],"juice":["מיץ","",""],"jungle":["ג'ונגל","",""],"junkyard":["מגרש גרוטאות","",""],"kettle":["קומקום","",""],"kite":["עפיפון","",""],"lake":["אגם","",""],"lame":["צולע","",""],"launder":["לכבס","",""],"leaf (leaves)":["( עלה (עלים","",""],"league":["מידת אורך קדומה","",""],"leniency":["חמלה, רחמים","",""],"leopard":["נמר","",""],"lifestyle":["אורח חיים","",""],"lip":["שפה","",""],"liver":["כבד","",""],"loan":["הלוואה","",""],"loathe":["לתעב","",""],"loyalty":["נאמנות","",""],"luck":["מזל","",""],"lunch":["ארוחת צהריים","",""],"made":["עשה","",""],"magical":["קסום","",""],"magnificent":["מדהים","",""],"make sure":["להבטיח, לוודא","",""],"makeup":["איפור","",""],"marble":["שיש","",""],"marsupial":["חיית כיס","",""],"mathematician":["מתמטיקאי","",""],"miracle":["נס, פלא","",""],"mock":["ללעוג","",""],"monk":["נזיר","",""],"monkey":["קוף","",""],"monster":["מפלצת","",""],"mood":["מצב רוח","",""],"mosquito":["יתוש","",""],"moth":["עש","",""],"mouse (mice)":["( עכבר (עכברים","",""],"mouth":["פה","",""],"nausea":["בחילה","",""],"nickname":["כינוי חיבה","",""],"no longer":["לא עוד","",""],"numerator":["( מונה (של שבר","",""],"numeric":["מספרי","",""],"nut":["אגוז","",""],"octopus":["תמנון","",""],"ode":["שיר הלל","",""],"olive":["זית","",""],"onion":["בצל","",""],"orchestra":["תזמורת","",""],"orchestrate":["לתאם, לתזמר","",""],"oven":["תנור בישול","",""],"overhaul":["שיפוץ, אוברול","",""],"pad":["לרפד","",""],"paddle":["משוט, דוושה","",""],"pan":["מחבת","",""],"paradox":["סתירה, פרדוקס","",""],"pathology":["פתולוגיה, ענף ברפואה","",""],"peach":["אפרסק","",""],"pepper":["פלפל","",""],"perch":["נח, ישב על ענף","",""],"pet":["חיית מחמד","",""],"pharmacy":["בית מרקחת","",""],"philosophy":["פילוסופיה","",""],"photograph":["צילום, לצלם","",""],"physical":["פיזי, גופני","",""],"physicist":["פיזיקאי","",""],"pick":["לקטוף, לבחור","",""],"pigeon":["יונה","",""],"pinch":["לצבוט","",""],"pit":["בור","",""],"plaster":["טיח","",""],"pool":["בריכה","",""],"pothole":["מהמורה, בור","",""],"pottery":["קדרות","",""],"poultry":["עוף","",""],"prank":["מתיחה","",""],"pregnancy":["הריון","",""],"pregnant":["( הרה (בהריון","",""],"prehistoric":["קדמון, פרה -היסטורי","",""],"preparation for":["הכנות לקראת","",""],"presentation":["מצגת","",""],"prick":["לדקור","",""],"printer":["מדפסת, דַּפָּס","",""],"propaganda":["תעמולה","",""],"prowess":["מיומנות, יכולת","",""],"purse":["ארנק","",""],"quarrelsome":["וכחני","",""],"rain":["גשם","",""],"rainbow":["קשת","",""],"rainfall":["ירידת גשמים","",""],"rainstorm":["סערת גשמים","",""],"rat":["עכברוש","",""],"redhead":["( ג'ינג'י (סלנג","",""],"rehearsal":["חזרה","",""],"rehearse":["לחזור, לתרגל","",""],"reincarnation":["גלגול נשמות","",""],"restaurant":["מסעדה","",""],"resurgence":["תחייה","",""],"retroactive":["רטרואקטיבי, למפרע","",""],"rhyme":["חרוז","",""],"rice":["אורז","",""],"ride":["רכיבה, לרכוב","",""],"ring":["טבעת","",""],"ring, rang":["לצלצל, צלצל","",""],"roast":["לקלות, צלי","",""],"robbery":["שוד","",""],"robe":["חלוק","",""],"roof":["גג","",""],"rubbish":["שטויות","",""],"run, ran":["לרוץ, רץ","",""],"saga":["סיפור, סאגה","",""],"salt":["מלח","",""],"sarcophagus":["ארון קבורה קדום","",""],"savanna":["ערבה, סוואנה","",""],"script":["תסריט","",""],"seafood":["פירות ים","",""],"seat":["מושב, להושיב","",""],"secret":["סוד","",""],"sentiments":["רגשות","",""],"shadow":["צל, להאפיל","",""],"shave":["גילוח, לגלח","",""],"shelf (shelves)":["( מדף (מדפים","",""],"shepherd":["רועה צאן","",""],"shingles":["רעף","",""],"shop":["לקנות","",""],"shoulder":["כתף","",""],"show":["להראות","",""],"shy":["ביישן","",""],"silk":["משי","",""],"silkworm":["תולעת משי","",""],"singer":["זמר","",""],"sir":["אדון, תואר אצולה אנגלי","",""],"sky":["שמיים, רקיע","",""],"smog":["ערפיח","",""],"smoke":["עשן, לעשן","",""],"snake":["נחש","",""],"snap":["להישבר","",""],"snarl":["לרטון, לנחור","",""],"sneeze":["להתעטש","",""],"snow":["שלג","",""],"soccer":["כדורגל","",""],"sold":["מכר","",""],"South":["דרום","",""],"southern":["דרומי","",""],"speck":["כתם","",""],"spider":["עכביש","",""],"spinach":["תרד","",""],"sponsor":["נותן חסות","",""],"spontaneous":["ללא מחשבה","",""],"spread":["ממרח, למרוח","",""],"spy":["מרגל, לרגל","",""],"staircase":["גרם מדרגות","",""],"stalk":["לעקוב, להטריד","",""],"star":["כוכב, לככב","",""],"staunch":["חזק, מוצק","",""],"steal":["לגנוב","",""],"stereotype":["סטריאוטיפ","",""],"sticky":["דביק","",""],"stove":["תנור, כיריים","",""],"stroke":["שבץ/אירוע מוחי","",""],"studio":["סטודיו","",""],"stuff":["למלא, לפחלץ","",""],"stunt":["פעלול","",""],"stupid":["טיפש","",""],"subtraction":["( חיסור (חשבון","",""],"sugar":["סוכר","",""],"sweet":["מתוק, ממתק","",""],"swept away":["נסחף","",""],"swindler":["רמאי","",""],"sword":["חרב","",""],"syllable":["הברה","",""],"syndrome":["תסמונת","",""],"syrup":["סירופ","",""],"tale":["סיפור, אגדה","",""],"taste":["טעם, לטעום","",""],"tax":["מס","",""],"teeth, tooth":["שיניים, שן","",""],"tent":["אוהל","",""],"thank":["תודה, להודות","",""],"theater":["בית קולנוע","",""],"theoretically":["תיאורטית, לכאורה","",""],"theory":["תיאוריה","",""],"thimble":["( אצבעון (לתפירה","",""],"through":["דרך, מבעד","",""],"throughout":["במשך, בכל","",""],"throw":["לזרוק, זריקה","",""],"ticket":["כרטיס","",""],"timeline":["ציר זמן","",""],"tin":["בדיל, עשוי מפח","",""],"tiny":["קטנטן","",""],"toad":["קרפדה","",""],"toes":["בהונות","",""],"tongue":["לשון","",""],"treasure":["אוצר, לנצור","",""],"treat":["לפנק","",""],"treatment":["טיפול","",""],"treaty":["אמנה ,הסכם, חוזה","",""],"trigger":["הדק","",""],"triggered":["גרם, עורר, הוביל ל","",""],"trim":["לגזום","",""],"triple 3":["פי","",""],"truck":["משאית, קרון משא","",""],"tutor":["מורה פרטי, להדריך","",""],"twig":["ענף קטן, זרד","",""],"twins":["תאומים","",""],"ugly":["מכוער","",""],"unattractive":["לא מושך","",""],"uncle":["דוד","",""],"unconcerned":["לא מודאג","",""],"uncritical":["לא ביקורתי","",""],"unearth":["לחשוף, לחפור","",""],"unfair":["לא הוגן","",""],"unholy":["לא קדוש, לא מוסרי","",""],"unwanted":["לא רצוי","",""],"upbringing":["גידול, חינוך","",""],"upholstery":["ריפוד","",""],"usher":["סדרן","",""],"using up":["לכלות, לנצל עד תום","",""],"vacation":["חופשה","",""],"vertebrate":["בעל חוליות","",""],"vest":["אפודה","",""],"victory":["ניצחון","",""],"villain":["רשע, נבל","",""],"vinegar":["חומץ","",""],"viper":["צפע","",""],"vociferous":["רעשני","",""],"vowel":["( תנועה (לשון","",""],"wall":["קיר","",""],"wart":["יבלת","",""],"wasp":["צרעה","",""],"waterfall":["מפל","",""],"wave":["גל","",""],"weapon":["נשק","",""],"wear":["ללבוש","",""],"weave":["לטוות, לארוג","",""],"wedding":["חתונה","",""],"weekend":["סוף שבוע","",""],"well":["בריא","",""],"whale":["לוויתן","",""],"whistle":["משרוקית, לשרוק","",""],"wholesale":["סיטונאות","",""],"wife":["אישה, רעיה","",""],"win":["ניצחון, לנצח","",""],"wolf (wolves)":["( זאב (זאבים","",""],"work":["עבודה, לעבוד","",""],"worm":["תולעת","",""],"writer":["סופר","",""],"yawn":["לפהק, פיהוק","",""],"zealot":["קנאי, פנט","",""]}};
+
+var STOR='psycho_v2',PRON='psycho_pron_v2',STREAK_KEY='psycho_streak_v1';
+var GOAL_KEY='psycho_goal_v1',WEEKLY_KEY='psycho_weekly_v1',MUTE_KEY='psycho_mute_v1';
+var gState={},pronCache={},muted=false;
+try{gState=JSON.parse(localStorage.getItem(STOR)||'{}')}catch(e){}
+try{pronCache=JSON.parse(localStorage.getItem(PRON)||'{}')}catch(e){}
+try{muted=localStorage.getItem(MUTE_KEY)==='1'}catch(e){}
+function saveSt(){try{localStorage.setItem(STOR,JSON.stringify(gState))}catch(e){}}
+function getSt(n){if(!gState[n])gState[n]={scores:{},seen:{},sessions:0,correct:0,answered:0};return gState[n];}
+function savePron(){try{localStorage.setItem(PRON,JSON.stringify(pronCache))}catch(e){}}
+var curList=null,curWords=null,curAll=null;
+
+function playSound(type){
+  if(muted)return;
+  try{
+    var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    var o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    if(type==='correct'){o.frequency.setValueAtTime(880,ctx.currentTime);g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.2);}
+    else if(type==='win75'||type==='win90'){o.frequency.setValueAtTime(660,ctx.currentTime);o.frequency.setValueAtTime(880,ctx.currentTime+0.1);g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);}
+    else{o.frequency.setValueAtTime(440,ctx.currentTime);g.gain.setValueAtTime(0.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.15);}
+    o.start();o.stop(ctx.currentTime+0.5);
+  }catch(e){}
+}
+
+function toggleMute(){
+  muted=!muted;
+  try{localStorage.setItem(MUTE_KEY,muted?'1':'0')}catch(e){}
+  var btn=document.getElementById('mute-btn');
+  btn.classList.toggle('muted',muted);
+  btn.textContent=muted?'🔇':'🔊';
+}
+
+function getStreakData(){try{return JSON.parse(localStorage.getItem(STREAK_KEY)||'{"streak":0,"lastDay":""}');}catch(e){return{streak:0,lastDay:''};}}
+function updateStreak(){
+  var today=new Date().toISOString().slice(0,10);
+  var d=getStreakData();
+  if(d.lastDay===today)return d.streak;
+  var yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  var streak=d.lastDay===yesterday?d.streak+1:1;
+  try{localStorage.setItem(STREAK_KEY,JSON.stringify({streak:streak,lastDay:today}));}catch(e){}
+  return streak;
+}
+function getTotalSeen(){
+  var t=0;
+  for(var i=1;i<=10;i++){var st=getSt(i);var w=ALL_LISTS[String(i)]||{};Object.keys(st.seen).forEach(function(k){if(w[k])t++;});}
+  return t;
+}
+function getTotalMastered(){
+  var t=0;
+  for(var i=1;i<=10;i++){var w=ALL_LISTS[String(i)]||{};var st=getSt(i);t+=Object.keys(w).filter(function(k){return(st.scores[k]||0)>=3;}).length;}
+  return t;
+}
+
+function getGoalData(){
+  var today=new Date().toISOString().slice(0,10);
+  try{var d=JSON.parse(localStorage.getItem(GOAL_KEY)||'{}');if(d.date===today)return d;}catch(e){}
+  return{date:today,sessions:0,words:[]};
+}
+function saveGoalData(d){try{localStorage.setItem(GOAL_KEY,JSON.stringify(d))}catch(e){}}
+function incrementGoal(words){
+  var d=getGoalData();d.sessions++;
+  if(words)d.words=d.words.concat(words.filter(function(w){return d.words.indexOf(w)<0;}));
+  saveGoalData(d);updateGoalUI();return d;
+}
+function updateGoalUI(){
+  var d=getGoalData();var target=5,pct=Math.min(100,d.sessions/target*100);
+  document.getElementById('goal-done').textContent=d.sessions;
+  document.getElementById('goal-bar').style.width=pct+'%';
+  if(d.sessions>=target){
+    document.getElementById('goal-sub').innerHTML='<span class="goal-complete">Daily goal complete! ✅</span>';
+  } else {
+    var rem=target-d.sessions;
+    document.getElementById('goal-sub').textContent=rem+' session'+(rem!==1?'s':'')+' remaining';
+  }
+}
+
+function recordWeekly(){
+  var today=new Date().toISOString().slice(0,10);
+  try{var d=JSON.parse(localStorage.getItem(WEEKLY_KEY)||'{}');d[today]=(d[today]||0)+1;localStorage.setItem(WEEKLY_KEY,JSON.stringify(d));}catch(e){}
+}
+function getWeeklyData(){
+  var result=[];
+  try{
+    var d=JSON.parse(localStorage.getItem(WEEKLY_KEY)||'{}');
+    var days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+    for(var i=6;i>=0;i--){
+      var dt=new Date(Date.now()-i*86400000);
+      result.push({label:days[dt.getDay()],count:d[dt.toISOString().slice(0,10)]||0,isToday:i===0});
+    }
+  }catch(e){}
+  return result;
+}
+
+var WOTD_KEY='psycho_wotd_v1';
+var wotdWord=null,wotdRevealed=false,wotdDone=false;
+function initWotd(){
+  var allWords=[];
+  for(var i=1;i<=10;i++){
+    var w=ALL_LISTS[String(i)]||{};
+    Object.keys(w).forEach(function(k){allWords.push({w:k,he:w[k][0]});});
+  }
+  var today=new Date().toISOString().slice(0,10);
+  var seed=parseInt(today.replace(/-/g,'').slice(-5))%allWords.length;
+  wotdWord=allWords[seed];
+  document.getElementById('wotd-word').textContent=wotdWord.w;
+  document.getElementById('wotd-he').textContent=wotdWord.he;
+
+  try{
+    var saved=JSON.parse(localStorage.getItem(WOTD_KEY)||'{}');
+    if(saved.date===today && saved.done){
+      wotdDone=true;
+      var card=document.getElementById('wotd-card');
+      card.innerHTML='<div class="wotd-collapsed">'
+        +'<div class="wotd-collapsed-label">⚡ Word of the Day</div>'
+        +'<div class="wotd-collapsed-row2">'
+        +'<div class="wotd-collapsed-he">'+wotdWord.he+'</div>'
+        +'<div style="color:var(--muted)">·</div>'
+        +'<div class="wotd-collapsed-word">'+wotdWord.w+'</div>'
+        +'</div>'
+        +'<div class="wotd-collapsed-result">'+saved.result+'</div>'
+        +'</div>';
+      return;
+    }
+  }catch(e){}
+
+  document.getElementById('wotd-card').onclick=function(){
+    if(wotdDone)return;
+    if(!wotdRevealed){
+      wotdRevealed=true;
+      document.getElementById('wotd-hint').style.display='none';
+      document.getElementById('wotd-revealed').style.display='block';
+    }
+  };
+  document.getElementById('wotd-speak-btn').onclick=function(e){
+    e.stopPropagation();
+    if(!wotdWord)return;
+    window.speechSynthesis.cancel();
+    var utt=new SpeechSynthesisUtterance(wotdWord.w);
+    utt.lang='en-US';utt.rate=0.85;window.speechSynthesis.speak(utt);
+  };
+  document.getElementById('wotd-yes').onclick=function(e){
+    e.stopPropagation();collapseWotd(true);playSound('correct');
+  };
+  document.getElementById('wotd-no').onclick=function(e){
+    e.stopPropagation();collapseWotd(false);
+  };
+}
+function collapseWotd(knew){
+  wotdDone=true;
+  var result=knew?'You knew it 🔥':'Keep going 💪';
+  try{
+    var today=new Date().toISOString().slice(0,10);
+    localStorage.setItem(WOTD_KEY,JSON.stringify({date:today,done:true,result:result}));
+  }catch(e){}
+  var card=document.getElementById('wotd-card');
+  card.innerHTML='<div class="wotd-collapsed">'
+    +'<div class="wotd-collapsed-label">⚡ Word of the Day</div>'
+    +'<div class="wotd-collapsed-row2">'
+    +'<div class="wotd-collapsed-he">'+wotdWord.he+'</div>'
+    +'<div style="color:var(--muted)">·</div>'
+    +'<div class="wotd-collapsed-word">'+wotdWord.w+'</div>'
+    +'</div>'
+    +'<div class="wotd-collapsed-result">'+result+'</div>'
+    +'</div>';
+}
+
+function buildHome(){
+  updateStreak();
+  document.getElementById('stat-streak').textContent=getStreakData().streak+' 🔥';
+  document.getElementById('stat-seen').textContent=getTotalSeen().toLocaleString();
+  document.getElementById('stat-mastered').textContent=getTotalMastered().toLocaleString();
+  updateGoalUI();
+  var grid=document.getElementById('list-grid');grid.innerHTML='';
+  for(var i=1;i<=10;i++){
+    var words=ALL_LISTS[String(i)]||{};
+    var total=Object.keys(words).length;
+    var st=getSt(i);
+    var mastered=Object.keys(words).filter(function(w){return(st.scores[w]||0)>=3;}).length;
+    var seen=Object.keys(st.seen).filter(function(w){return words[w];}).length;
+    var pct=total?Math.round(mastered/total*100):0;
+    var card=document.createElement('div');
+    card.className='list-card'+(seen>0?' has-prog':'');
+    card.innerHTML='<div class="list-unit">Unit '+i+'</div>'
+      +'<div class="list-title">'+total+' words</div>'
+      +'<div class="lbar-wrap"><div class="lbar-fill" style="width:'+pct+'%"></div></div>'
+      +'<div class="lbar-stats"><span>'+seen+' seen</span><span class="pct">'+pct+'% mastered</span></div>';
+    (function(num){card.onclick=function(){openList(num);};})(i);
+    grid.appendChild(card);
+  }
+}
+
+function openList(num){
+  curList=num;curWords=ALL_LISTS[String(num)]||{};curAll=Object.keys(curWords);
+  document.getElementById('study-title').textContent='Unit '+num;
+  var mb=document.getElementById('mute-btn');
+  mb.classList.toggle('muted',muted);mb.textContent=muted?'🔇':'🔊';mb.onclick=toggleMute;
+  document.getElementById('home').style.display='none';
+  document.getElementById('study').style.display='block';
+  updateHdr();startSes(true);
+}
+function goHome(){
+  document.getElementById('study').style.display='none';
+  document.getElementById('home').style.display='block';
+  buildHome();curList=null;
+}
+
+function speakWord(e){
+  e.stopPropagation();
+  var w=deck[deckIdx];if(!w)return;
+  window.speechSynthesis.cancel();
+  var utt=new SpeechSynthesisUtterance(w);
+  utt.lang='en-US';utt.rate=0.85;window.speechSynthesis.speak(utt);
+}
+
+var mode='all',deck=[],deckIdx=0,flipped=false,sKnew=0,sDidnt=0,todayWords=[];
+function buildDeck(){
+  var st=getSt(curList);var words;
+  if(mode==='hard'){words=curAll.filter(function(w){return(st.scores[w]||0)<0;});if(!words.length)words=curAll;}
+  else if(mode==='new'){words=curAll.filter(function(w){return!st.seen[w];});if(!words.length)words=curAll;}
+  else words=curAll.slice();
+  deck=words.sort(function(a,b){return((st.scores[a]||0)+Math.random()*4)-((st.scores[b]||0)+Math.random()*4);}).slice(0,20);
+  deckIdx=0;sKnew=0;sDidnt=0;flipped=false;
+}
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('mode-'+m).classList.add('active');
+  startSes(false);
+}
+function startSes(count){
+  var st=getSt(curList);
+  if(count){st.sessions++;saveSt();recordWeekly();}
+  buildDeck();
+  document.getElementById('ses-done').classList.remove('visible');
+  document.getElementById('card-area').style.display='';
+  document.getElementById('dqp').style.display='none';
+  showCard();
+}
+function showCard(){
+  if(deckIdx>=deck.length){endSes();return;}
+  var w=deck[deckIdx];var entry=curWords[w]||['','',''];
+  flipped=false;
+  document.getElementById('card-inner').classList.remove('flipped');
+  document.getElementById('cf-en').textContent=w;
+  document.getElementById('cf-type').textContent=entry[1]||'';
+  clearTimeout(window._bt);
+  window._bt=setTimeout(function(){
+    document.getElementById('cb-he').textContent=entry[0];
+    document.getElementById('cb-type').textContent=entry[1]||'';
+    document.getElementById('cb-en').textContent=w;
+    var t=document.getElementById('cb-tip');
+    if(entry[2]){t.textContent='💡 '+entry[2];t.style.display='';}else t.style.display='none';
+  },460);
+  document.getElementById('card-btns').classList.remove('visible');
+  document.getElementById('card-counter').textContent=(deckIdx+1)+' / '+deck.length;
+  document.getElementById('pbar').style.width=(deckIdx/deck.length*100)+'%';
+  updateHdr();
+}
+function flipCard(){
+  if(!flipped){
+    flipped=true;
+    document.getElementById('card-inner').classList.add('flipped');
+    document.getElementById('card-btns').classList.add('visible');
+    var st=getSt(curList);
+    st.seen[deck[deckIdx]]=(st.seen[deck[deckIdx]]||0)+1;saveSt();
+  } else {
+    document.getElementById('card-inner').classList.remove('flipped');
+    flipped=false;
+    document.getElementById('card-btns').classList.remove('visible');
+  }
+}
+function rateCard(knew){
+  var w=deck[deckIdx];var st=getSt(curList);
+  todayWords.push(w);
+  if(knew){st.scores[w]=(st.scores[w]||0)+1;st.correct++;sKnew++;}
+  else{st.scores[w]=(st.scores[w]||0)-2;sDidnt++;}
+  st.answered++;saveSt();deckIdx++;showCard();
+}
+function endSes(){
+  document.getElementById('card-area').style.display='none';
+  document.getElementById('ses-done').classList.add('visible');
+  var total=sKnew+sDidnt;var pct=total?Math.round(sKnew/total*100):0;
+  document.getElementById('d-knew').textContent=sKnew;
+  document.getElementById('d-didnt').textContent=sDidnt;
+  document.getElementById('d-pct').textContent=pct+'%';
+  document.getElementById('done-sub').textContent='You reviewed '+total+' words';
+  document.getElementById('pbar').style.width='100%';
+  updateHdr();
+  var goalData=incrementGoal(todayWords);todayWords=[];
+  if(goalData.sessions>=5){playSound('win75');document.getElementById('dqp').style.display='block';}
+}
+function restartSes(){
+  document.getElementById('ses-done').classList.remove('visible');
+  document.getElementById('card-area').style.display='';
+  startSes(true);
+}
+
+var qDeck=[],qIdx=0,qOk=0,qBad=0,quizLen=20;
+function setQuizLen(n){
+  quizLen=n;
+  document.querySelectorAll('.quiz-len-btn').forEach(function(b){
+    b.classList.toggle('active',parseInt(b.textContent)===n);
+  });
+  var display=document.getElementById('quiz-len-display');
+  if(display)display.textContent=n+' words';
+  startQuiz();
+}
+function startQuiz(){
+  document.getElementById('quiz-done').classList.remove('visible');
+  document.getElementById('quiz-area').style.display='';
+  var st=getSt(curList);
+  qDeck=curAll.slice().sort(function(a,b){return((st.scores[a]||0)+Math.random()*4)-((st.scores[b]||0)+Math.random()*4);}).slice(0,quizLen);
+  qIdx=0;qOk=0;qBad=0;
+  document.getElementById('qbar').style.width='0%';showQuiz();
+}
+function startDailyQuiz(){
+  document.getElementById('dqp').style.display='none';switchTab('quiz');
+  var goalData=getGoalData();
+  var words=goalData.words.length>0?goalData.words:curAll;
+  document.getElementById('quiz-done').classList.remove('visible');
+  document.getElementById('quiz-area').style.display='';
+  qDeck=words.slice().sort(function(){return Math.random()-.5;}).slice(0,20);
+  qIdx=0;qOk=0;qBad=0;
+  document.getElementById('qbar').style.width='0%';showQuiz();
+}
+function showQuiz(){
+  if(qIdx>=qDeck.length){endQuiz();return;}
+  var w=qDeck[qIdx];var entry=curWords[w]||['',''];
+  document.getElementById('q-word').textContent=w;
+  document.getElementById('q-type').textContent=entry[1]||'';
+  document.getElementById('quiz-fb').className='quiz-fb';
+  document.getElementById('quiz-next').className='quiz-next';
+  var others=curAll.filter(function(k){return k!==w;}).sort(function(){return Math.random()-.5;}).slice(0,3);
+  var opts=others.concat([w]).sort(function(){return Math.random()-.5;});
+  var cont=document.getElementById('quiz-opts');cont.innerHTML='';
+  opts.forEach(function(opt){
+    var b=document.createElement('button');b.className='opt-btn';
+    b.textContent=(curWords[opt]||[''])[0];
+    b.onclick=(function(o){return function(){checkQuiz(b,o,w);};})(opt);
+    cont.appendChild(b);
+  });
+  document.getElementById('qbar').style.width=(qIdx/qDeck.length*100)+'%';
+}
+function checkQuiz(btn,chosen,correct){
+  document.querySelectorAll('.opt-btn').forEach(function(b){b.classList.add('disabled');});
+  var fb=document.getElementById('quiz-fb');var st=getSt(curList);
+  if(chosen===correct){
+    btn.classList.add('correct');fb.innerHTML='&#x2713; Correct!';fb.className='quiz-fb show ok';
+    st.scores[correct]=(st.scores[correct]||0)+1;qOk++;playSound('correct');
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(function(b){if(b.textContent===(curWords[correct]||[''])[0])b.classList.add('correct');});
+    fb.textContent='Wrong — '+(curWords[correct]||[''])[0];fb.className='quiz-fb show bad';
+    st.scores[correct]=(st.scores[correct]||0)-2;qBad++;
+  }
+  st.answered++;saveSt();document.getElementById('quiz-next').className='quiz-next show';
+}
+function nextQuiz(){qIdx++;showQuiz();}
+function endQuiz(){
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('quiz-done').classList.add('visible');
+  var total=qOk+qBad;var pct=total?Math.round(qOk/total*100):0;
+  document.getElementById('qd-ok').textContent=qOk;
+  document.getElementById('qd-bad').textContent=qBad;
+  document.getElementById('qd-pct').textContent=pct+'%';
+  var msg,icon;
+  if(pct>=90){msg='Perfect! You have mastered the material';icon='🏆';playSound('win90');}
+  else if(pct>=75){msg='Great job! A little more practice and you are there';icon='💪';playSound('win75');}
+  else if(pct>=60){msg='Not bad - some words need more review';icon='📚';playSound('neutral');}
+  else{msg='Not there yet - go back to flashcards and try again';icon='🎯';}
+  document.getElementById('quiz-done-icon').textContent=icon;
+  document.getElementById('qd-sub').textContent=msg;
+}
+
+function updateProgress(){
+  var st=getSt(curList);
+  var seen=Object.keys(st.seen).filter(function(w){return curWords[w];}).length;
+  var mastered=curAll.filter(function(w){return(st.scores[w]||0)>=3;}).length;
+  document.getElementById('p-seen').textContent=seen;
+  document.getElementById('p-mastered').textContent=mastered;
+  document.getElementById('p-acc').textContent=st.answered?Math.round(st.correct/st.answered*100)+'%':'--';
+  document.getElementById('p-ses').textContent=st.sessions;
+  var weekly=getWeeklyData();
+  var max=Math.max(1,Math.max.apply(null,weekly.map(function(d){return d.count;})));
+  var bars=document.getElementById('weekly-bars');bars.innerHTML='';
+  weekly.forEach(function(d){
+    var h=Math.max(4,Math.round(d.count/max*56));
+    var wrap=document.createElement('div');wrap.className='wbar-wrap';
+    wrap.innerHTML='<div class="wbar'+(d.isToday?' today':'')+'" style="height:'+h+'px"></div><div class="wbar-label">'+d.label+'</div>';
+    bars.appendChild(wrap);
+  });
+  var hard=curAll.filter(function(w){return(st.scores[w]||0)<-1&&st.seen[w];}).sort(function(a,b){return(st.scores[a]||0)-(st.scores[b]||0);}).slice(0,20);
+  document.getElementById('hard-list').innerHTML=hard.length?hard.map(function(w){return'<span class="word-chip chip-hard">'+w+'</span>';}).join(''):'<span style="color:var(--muted);font-size:12px">None yet</span>';
+  var good=curAll.filter(function(w){return(st.scores[w]||0)>=3;}).slice(0,20);
+  document.getElementById('good-list').innerHTML=good.length?good.map(function(w){return'<span class="word-chip chip-good">'+w+'</span>';}).join(''):'<span style="color:var(--muted);font-size:12px">Keep going!</span>';
+}
+function updateHdr(){
+  if(!curList)return;
+  var m=curAll.filter(function(w){return(getSt(curList).scores[w]||0)>=3;}).length;
+  document.getElementById('hdr-mastered').textContent=m;
+}
+function confirmReset(){
+  if(confirm('Reset progress for Unit '+curList+'?')){
+    gState[curList]={scores:{},seen:{},sessions:0,correct:0,answered:0};
+    saveSt();updateProgress();updateHdr();startSes(false);
+  }
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('active',['cards','quiz','progress'][i]===tab);});
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+  document.getElementById('view-'+tab).classList.add('active');
+  if(tab==='quiz')startQuiz();
+  if(tab==='progress')updateProgress();
+}
+
+(function(){
+  var card=document.getElementById('card-wrap');var sx=0,sy=0;
+  card.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+  card.addEventListener('touchmove',function(e){
+    var inner=document.getElementById('card-inner');
+    if(!inner.classList.contains('flipped'))return;
+    var dx=e.touches[0].clientX-sx;
+    if(dx>30){inner.classList.add('sr');inner.classList.remove('sl');}
+    else if(dx<-30){inner.classList.add('sl');inner.classList.remove('sr');}
+    else{inner.classList.remove('sr','sl');}
+  },{passive:true});
+  card.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+    var inner=document.getElementById('card-inner');inner.classList.remove('sr','sl');
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5&&inner.classList.contains('flipped')){rateCard(dx>0);}
+  },{passive:true});
+})();
+
+var THEME_KEY='psycho_theme_v1';
+var THEMES=[
+  {name:'Purple', accent:'#7c6dfa', accent2:'#a78bfa'},
+  {name:'Blue',   accent:'#3b82f6', accent2:'#60a5fa'},
+  {name:'Green',  accent:'#10b981', accent2:'#34d399'},
+  {name:'Orange', accent:'#f97316', accent2:'#fb923c'},
+  {name:'Pink',   accent:'#ec4899', accent2:'#f472b6'},
+];
+var currentTheme=0;
+try{currentTheme=parseInt(localStorage.getItem(THEME_KEY)||'0');}catch(e){}
+function applyTheme(idx){
+  currentTheme=idx;
+  var t=THEMES[idx];
+  document.documentElement.style.setProperty('--accent',t.accent);
+  document.documentElement.style.setProperty('--accent2',t.accent2);
+  try{localStorage.setItem(THEME_KEY,String(idx));}catch(e){}
+  document.querySelectorAll('.color-dot').forEach(function(d,i){
+    d.classList.toggle('active',i===idx);
+  });
+}
+function buildColorPicker(){
+  var cont=document.getElementById('color-dots');
+  cont.innerHTML='';
+  THEMES.forEach(function(t,i){
+    var d=document.createElement('div');
+    d.className='color-dot'+(i===currentTheme?' active':'');
+    d.style.background='linear-gradient(135deg,'+t.accent+','+t.accent2+')';
+    d.title=t.name;
+    d.onclick=(function(idx){return function(){applyTheme(idx);};})(i);
+    cont.appendChild(d);
+  });
+  applyTheme(currentTheme);
+}
+
+initWotd();
+buildHome();
+buildColorPicker();
+</script>
+</body>
+</html>
